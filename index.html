@@ -1,0 +1,1516 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>U+유모바일 요금제 선택 화면 개선 — 통합 리포트</title>
+<style>
+
+:root{
+  --bg:#F3F3F8; --bg-deep:#EBEBF2; --surface:#FFFFFF; --line:#ECECF2; --line-2:#DFDEE9;
+  --text:#16161E; --muted:#6C6C7C; --muted-2:#9C9CAB;
+  --main:#5B4BE1; --main-deep:#4638C2; --main-weak:#EFEDFD; --main-mid:#CBC3F8; --main-ghost:#F7F6FE;
+  --ok:#0F9D6B; --ok-bg:#E9F8F1;
+  --warn:#D97706; --warn-bg:#FEF6E9;
+  --err:#DC2626; --err-bg:#FDEDED;
+  --gray-btn:#C2C2CD;
+  --r:16px;
+  --shadow-s:0 1px 2px rgba(22,22,40,.05);
+  --shadow-m:0 6px 18px rgba(22,22,40,.07);
+  --shadow-l:0 18px 44px rgba(22,22,50,.14);
+  --ring:0 0 0 3px rgba(91,75,225,.14);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:"Pretendard","Apple SD Gothic Neo",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Malgun Gothic",sans-serif;background:linear-gradient(180deg,var(--bg) 0%,var(--bg-deep) 100%);min-height:100vh;color:var(--text);line-height:1.55;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+select{font-family:inherit;cursor:pointer}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:99px}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ===== 상단 ===== */
+.top{background:rgba(255,255,255,.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);padding:14px 24px;position:sticky;top:0;z-index:100}
+.top-in{max-width:1280px;margin:0 auto;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.brand{font-size:15px;font-weight:800;letter-spacing:-.015em}
+.brand small{display:block;font-size:11px;font-weight:600;color:var(--muted-2);letter-spacing:0;margin-top:1px}
+.top-r{margin-left:auto;display:flex;align-items:center;gap:10px}
+.navtabs{display:flex;gap:4px;background:var(--bg);padding:4px;border-radius:12px}
+.navtabs button{padding:8px 16px;border-radius:9px;font-size:13px;font-weight:700;color:var(--muted);transition:all .15s}
+.navtabs button.on{background:var(--surface);color:var(--main);box-shadow:var(--shadow-s)}
+.reload-top{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:12px;border:1px solid var(--line-2);background:var(--surface);font-size:12.5px;font-weight:700;color:var(--muted);transition:all .15s;box-shadow:var(--shadow-s)}
+.reload-top:hover{color:var(--main);border-color:var(--main-mid);box-shadow:var(--ring)}
+.reload-top svg{width:13px;height:13px;stroke:currentColor;stroke-width:2.4;fill:none}
+
+.wrap{max-width:1280px;margin:0 auto;padding:28px 24px 80px}
+.view{display:none}
+.view.on{display:block;animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ===== 레이아웃 ===== */
+.split{display:grid;grid-template-columns:minmax(0,1fr) 418px;gap:28px;align-items:start}
+.solo{display:flex;justify-content:center;gap:28px;align-items:flex-start;flex-wrap:wrap}
+@media(max-width:980px){.split{grid-template-columns:1fr}.panel-side{order:2}}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:22px;box-shadow:var(--shadow-s)}
+.panel h3{font-size:14px;font-weight:800;letter-spacing:-.01em;display:flex;align-items:center;gap:8px}
+.panel h3 .dot{width:7px;height:7px;border-radius:50%;background:var(--main)}
+.panel .sub{font-size:12px;color:var(--muted);margin:5px 0 15px;line-height:1.6}
+
+.refbar{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px 18px;font-size:12px;color:var(--muted);margin-bottom:20px;line-height:1.7;display:flex;gap:16px;align-items:center;flex-wrap:wrap;box-shadow:var(--shadow-s)}
+.refbar b{color:var(--text)}
+.refbar .kbd{display:inline-block;background:var(--main-ghost);color:var(--main);border:1px solid var(--main-mid);border-radius:6px;padding:0 7px;font-size:10.5px;font-weight:800;margin:0 1px}
+
+/* ===== 폰 프레임 ===== */
+.phone-col{display:flex;flex-direction:column;align-items:center;gap:12px;position:sticky;top:86px}
+.phone{width:394px;max-width:100%;height:838px;max-height:calc(100vh - 150px);min-height:600px;background:var(--surface);border:1px solid var(--line-2);border-radius:34px;box-shadow:var(--shadow-l);overflow:hidden;display:flex;flex-direction:column;position:relative}
+.notch{flex-shrink:0;height:24px;display:flex;align-items:flex-end;justify-content:center}
+.notch i{width:110px;height:9px;background:var(--bg-deep);border-radius:99px}
+.ph-status{height:22px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 22px;font-size:10.5px;color:var(--muted-2);font-weight:700;letter-spacing:.02em}
+.ph-head{flex-shrink:0;display:flex;align-items:center;padding:11px 16px;border-bottom:1px solid var(--line);font-size:15px;font-weight:800}
+.ph-head .ic{width:28px;font-size:17px;color:var(--muted);font-weight:400}
+.ph-head .t{flex:1;text-align:center;letter-spacing:-.01em}
+.ph-body{flex:1;overflow-y:auto;overflow-x:hidden;padding:18px 16px 10px;position:relative;overscroll-behavior:contain}
+.ph-sticky{flex-shrink:0;border-top:1px solid var(--line);background:rgba(255,255,255,.96);backdrop-filter:blur(8px);padding:10px 16px calc(14px + env(safe-area-inset-bottom,0px));box-shadow:0 -6px 18px rgba(22,22,50,.05)}
+.badge-note{font-size:11px;color:var(--muted-2);text-align:center;font-weight:600}
+.reload-under{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:99px;border:1px solid var(--line-2);background:var(--surface);font-size:11.5px;font-weight:700;color:var(--muted);transition:all .15s}
+.reload-under:hover{color:var(--main);border-color:var(--main-mid)}
+.reload-under svg{width:12px;height:12px;stroke:currentColor;stroke-width:2.4;fill:none}
+
+/* ===== 화면 요소 ===== */
+.h1{font-size:18px;font-weight:800;letter-spacing:-.02em;margin-bottom:16px;line-height:1.4}
+.h1 em{font-style:normal;color:var(--main)}
+
+.tabbar{position:sticky;top:-18px;z-index:5;background:rgba(255,255,255,.96);backdrop-filter:blur(6px);padding:8px 0 12px;margin:-8px 0 0;display:flex;gap:6px;flex-wrap:wrap}
+.tabbar button{padding:8px 15px;border-radius:99px;background:var(--bg);font-size:12.5px;font-weight:700;color:var(--muted);display:inline-flex;align-items:center;gap:5px;min-height:36px;transition:all .16s;border:1px solid transparent}
+.tabbar button:hover:not(.on){border-color:var(--line-2);color:var(--text)}
+.tabbar button.on{background:linear-gradient(135deg,var(--main) 0%,var(--main-deep) 100%);color:#fff;box-shadow:0 4px 12px rgba(91,75,225,.28)}
+.tabbar .bst{font-size:9px;background:rgba(255,255,255,.26);padding:1.5px 6px;border-radius:5px;letter-spacing:.03em;font-weight:800}
+.tabbar button:not(.on) .bst{background:var(--main-weak);color:var(--main)}
+
+.ctrls{display:flex;align-items:center;gap:6px;margin:12px 0 4px;flex-wrap:wrap}
+.ctrls .cnt{font-size:12.5px;font-weight:700;margin-right:auto;color:var(--muted)}
+.ctrls .cnt b{color:var(--main);font-size:14px}
+.chip{padding:7px 12px;border:1px solid var(--line-2);border-radius:10px;font-size:11.5px;font-weight:700;color:var(--muted);background:var(--surface);min-height:34px;display:inline-flex;align-items:center;gap:4px;transition:all .15s}
+.chip:hover{border-color:var(--main-mid);color:var(--main)}
+.chip.act{border-color:var(--main);color:var(--main);background:var(--main-weak);box-shadow:var(--ring)}
+.chip .chev{width:12px;height:12px;stroke:currentColor;stroke-width:2.3;fill:none;stroke-linecap:round;stroke-linejoin:round;transition:transform .22s ease}
+.chip.open .chev{transform:rotate(180deg)}
+/* 필터 패널 — 열림·닫힘 대칭 트랜지션 (display 토글 대신 max-height) */
+.filterbox{background:var(--main-ghost);border:1px solid transparent;border-radius:14px;padding:0 14px;margin:0;max-height:0;opacity:0;overflow:hidden;transition:max-height .26s cubic-bezier(.3,1,.4,1), opacity .18s ease, padding .26s ease, margin .26s ease, border-color .26s ease}
+.filterbox.open{max-height:320px;opacity:1;padding:13px 14px;margin:10px 0 2px;border-color:var(--line)}
+/* 패널 내부 — 타이틀 / 라벨 열 / 컨트롤 열 3단 정렬 */
+.fb-head{margin-bottom:12px}
+.fb-head b{font-size:12.5px;font-weight:800;color:var(--text);letter-spacing:-.01em}
+.fb-fields{display:flex;flex-direction:column;gap:9px}
+.filterbox label{display:flex;align-items:center;gap:10px;font-size:12px;font-weight:700;color:var(--muted)}
+.filterbox label>span{flex:0 0 82px}
+.filterbox select{flex:1;min-width:0;padding:0 11px;border:1px solid var(--line-2);border-radius:10px;font-size:12.5px;font-weight:700;background:#fff;color:var(--text);min-height:40px}
+.filterbox select:focus{outline:none;border-color:var(--main);box-shadow:var(--ring)}
+.fb-act{display:flex;gap:8px;margin-top:13px;padding-top:12px;border-top:1px solid var(--main-weak)}
+.fb-reset{flex:0 0 auto;padding:0 15px;min-height:40px;border:1px solid var(--line-2);background:var(--surface);border-radius:10px;font-size:12px;font-weight:700;color:var(--muted);transition:all .15s}
+.fb-reset:hover{color:var(--main);border-color:var(--main-mid)}
+.fb-reset:disabled{opacity:.45;cursor:default}
+.fb-done{flex:1;min-height:40px;border-radius:10px;background:var(--main);color:#fff;font-size:12.5px;font-weight:800;transition:filter .15s}
+.fb-done:hover{filter:brightness(1.06)}
+
+
+/* ===== 카드 ===== */
+.list{display:flex;flex-direction:column;gap:11px;margin-top:12px}
+.card{border:1px solid var(--line);border-radius:var(--r);padding:16px;background:var(--surface);display:block;width:100%;text-align:left;position:relative;transition:border-color .15s, box-shadow .15s, transform .1s;animation:cardIn .28s ease both}
+@keyframes cardIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.card:hover{border-color:var(--main-mid);box-shadow:var(--shadow-m)}
+.card:active{transform:scale(.994)}
+.card.sel{border:2px solid var(--main);padding:15px;box-shadow:0 6px 20px rgba(91,75,225,.15)}
+.card-top{display:flex;align-items:flex-start;gap:9px;margin-bottom:10px}
+.rank{flex-shrink:0;min-width:24px;height:24px;padding:0 5px;border-radius:8px;background:linear-gradient(135deg,var(--main),var(--main-deep));color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-top:1px;box-shadow:0 2px 6px rgba(91,75,225,.25)}
+.badges{display:flex;gap:5px;flex-wrap:wrap;flex:1;min-width:0}
+.bdg{font-size:11px;font-weight:700;padding:4.5px 10px;border-radius:7px;background:#EEEEF4;color:#5A5A6B;letter-spacing:-.01em;white-space:nowrap;line-height:1.3}
+.bdg.best{background:#E1F6EA;color:#0E8B52}
+.bdg.combo{background:var(--main-weak);color:var(--main-deep)}
+.radio{flex-shrink:0;width:23px;height:23px;border-radius:50%;border:1.5px solid var(--line-2);background:transparent;display:flex;align-items:center;justify-content:center;position:relative;transition:all .18s}
+.radio svg{width:12px;height:12px;stroke:var(--line-2);stroke-width:2.8;fill:none;transition:stroke .18s}
+.card.sel .radio{background:var(--main);border-color:var(--main);transform:scale(1.06);box-shadow:0 2px 8px rgba(91,75,225,.35)}
+.card.sel .radio svg{stroke:#fff}
+.hit{position:absolute;inset:-11px;border-radius:50%}
+/* ── 카드 내부 단일 그리드: 모든 블록이 카드 콘텐츠 좌·우 경계에 정렬 ── */
+.pname{font-size:17.5px;font-weight:800;letter-spacing:-.02em;line-height:1.32}
+.prices{display:flex;align-items:baseline;justify-content:flex-end;gap:9px;margin-top:8px}
+.p-old{font-size:13.5px;color:var(--muted-2);text-decoration:line-through;font-weight:600}
+.p-new{font-size:21px;font-weight:800;color:var(--main);letter-spacing:-.025em}
+.p-only{font-size:21px;font-weight:800;letter-spacing:-.025em}
+.per{font-size:13px;color:var(--muted);font-weight:700}
+/* 스펙 — 배경 박스 대신 헤어라인 구분, 텍스트가 콘텐츠 경계에서 시작 */
+/* 스펙 영역 — 면(surface) 구성 + 센터 정렬 */
+.info{margin-top:13px;background:var(--bg);border-radius:12px;padding:14px 14px 13px;display:flex;flex-direction:column;align-items:center;gap:10px;font-size:14px;font-weight:700;text-align:center}
+.info .chips{display:flex;justify-content:center;gap:18px;flex-wrap:wrap;width:100%}
+.info .chips span{display:inline-flex;align-items:center;gap:8px;color:var(--text)}
+.info .chips svg{width:18px;height:18px;flex-shrink:0;stroke:var(--muted-2);stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.info .sp{width:100%;padding-top:10px;border-top:1px solid var(--line-2);font-size:12.5px;font-weight:600;color:var(--muted);line-height:1.5;text-align:center}
+/* 혜택 — 정보 면: 스펙과 동일하게 센터 */
+.benefit{margin-top:9px;padding:11px 13px;background:var(--main-ghost);border:1px solid var(--main-weak);border-radius:12px;font-size:12.5px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;color:var(--main-deep);text-align:center}
+.benefit .gi{flex-shrink:0;width:22px;height:22px;border-radius:7px;background:var(--main-weak);display:inline-flex;align-items:center;justify-content:center;font-size:12px}
+
+/* 비교 담기 — 액션: 우측 컨트롤 축. 구분선 없이 여백으로 분리
+   컨트롤은 히트 영역이 곧 요소이므로 라디오와 동일하게 '박스 경계'를 우측 그리드에 정렬 */
+.cmprow{margin-top:4px;display:flex;align-items:center;justify-content:flex-end}
+.cmpbox{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--muted);padding:0 11px;min-height:44px;border-radius:11px;transition:background .15s, color .15s;white-space:nowrap}
+.cmpbox:hover{background:var(--bg);color:var(--main)}
+.cmpbox.on{color:var(--main);background:var(--main-weak)}
+.cmpbox.on:hover{background:var(--main-mid)}
+.cb{width:18px;height:18px;border:1.5px solid var(--line-2);border-radius:5px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;color:transparent;transition:all .15s;background:var(--surface)}
+.cb.on{background:var(--main);border-color:var(--main);color:#fff}
+
+.sentinel{height:1px}
+.loading{text-align:center;font-size:11.5px;color:var(--muted-2);padding:14px 0 8px;font-weight:600}
+.loading .dots span{display:inline-block;width:4px;height:4px;border-radius:50%;background:var(--main-mid);margin:0 2px;animation:blink 1.1s infinite}
+.loading .dots span:nth-child(2){animation-delay:.18s}
+.loading .dots span:nth-child(3){animation-delay:.36s}
+@keyframes blink{0%,70%,100%{opacity:.25}35%{opacity:1}}
+
+/* 빈 상태 */
+.empty{text-align:center;padding:58px 16px;animation:fadeIn .25s ease}
+.empty .eicon{width:52px;height:52px;border-radius:18px;background:var(--bg);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:22px;color:var(--muted-2)}
+.empty p{font-size:13.5px;color:var(--muted);margin-bottom:16px;font-weight:600}
+.empty button{padding:10px 20px;border:1px solid var(--main);color:var(--main);border-radius:11px;font-size:12.5px;font-weight:800;background:var(--main-weak);min-height:40px;transition:all .15s}
+.empty button:hover{box-shadow:var(--ring)}
+
+/* sticky bar */
+.sum{font-size:12.5px;font-weight:700;background:var(--main-weak);border-radius:11px;padding:9px 13px;margin-bottom:9px;display:flex;justify-content:space-between;align-items:center;gap:8px;animation:fadeIn .2s ease}
+.sum.idle{background:var(--bg);color:var(--muted);justify-content:center;font-weight:600}
+.sum .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--main)}
+.sum .pr{flex-shrink:0;font-weight:800}
+.cta{width:100%;padding:15px;border-radius:13px;background:linear-gradient(135deg,var(--main) 0%,var(--main-deep) 100%);color:#fff;font-size:15px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px;min-height:52px;letter-spacing:-.01em;box-shadow:0 6px 16px rgba(91,75,225,.3);transition:all .15s}
+.cta:hover{filter:brightness(1.05)}
+.cta:active{transform:scale(.985)}
+.cta.off{background:var(--gray-btn);cursor:not-allowed;box-shadow:none}
+.cta.off:hover{filter:none}
+
+/* 개통방법 / 완료 화면 */
+.sect-t{font-size:12.5px;font-weight:800;color:var(--muted);margin:16px 0 8px;letter-spacing:.01em}
+.opt{border:1px solid var(--line);border-radius:var(--r);padding:15px;display:flex;gap:11px;align-items:flex-start;width:100%;text-align:left;background:var(--surface);margin-bottom:10px;transition:all .15s}
+.opt:hover{border-color:var(--main-mid)}
+.opt.sel{border:2px solid var(--main);padding:14px;box-shadow:0 6px 20px rgba(91,75,225,.12)}
+.opt .radio{margin-top:1px}
+.opt.sel .radio{background:var(--main);border-color:var(--main)}
+.opt.sel .radio svg{stroke:#fff}
+.opt b{font-size:14.5px;font-weight:800;display:block}
+.opt small{font-size:11.5px;color:var(--muted);display:block;margin-top:3px}
+.ro{border:1px solid var(--line);border-radius:var(--r);padding:16px;background:linear-gradient(180deg,#FCFCFE,#F8F8FB)}
+.ro .lock{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--muted-2);margin-top:12px;font-weight:700;background:var(--surface);border:1px solid var(--line);border-radius:7px;padding:4px 9px}
+.done{padding:34px 8px 20px;text-align:center;animation:fadeIn .3s ease}
+.done .ck{width:60px;height:60px;border-radius:50%;background:var(--ok-bg);color:var(--ok);font-size:28px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;animation:pop .35s cubic-bezier(.2,1.6,.5,1) both}
+@keyframes pop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+.done h4{font-size:16.5px;font-weight:800;margin-bottom:6px;letter-spacing:-.01em}
+.done p{font-size:12.5px;color:var(--muted)}
+.carry{margin-top:20px;text-align:left;background:var(--bg);border-radius:14px;padding:15px}
+.carry dt{font-size:10.5px;font-weight:800;color:var(--muted);letter-spacing:.06em;margin-bottom:9px}
+.carry div{display:flex;justify-content:space-between;font-size:12.5px;padding:4.5px 0;gap:10px}
+.carry div span:first-child{color:var(--muted);flex-shrink:0}
+.carry div span:last-child{font-weight:700;text-align:right}
+
+/* 오버레이 */
+.dim{position:absolute;inset:0;background:rgba(18,18,34,.46);backdrop-filter:blur(2px);display:none;align-items:center;justify-content:center;padding:28px;z-index:40}
+.dim.on{display:flex;animation:fadeIn .18s ease}
+.alert{background:var(--surface);border-radius:20px;padding:26px 20px 16px;width:100%;text-align:center;box-shadow:var(--shadow-l);animation:pop .28s cubic-bezier(.2,1.4,.5,1) both}
+.alert p{font-size:13.5px;font-weight:700;line-height:1.6;margin-bottom:20px}
+.alert button{width:100%;padding:13px;border-radius:12px;background:linear-gradient(135deg,var(--main),var(--main-deep));color:#fff;font-size:14px;font-weight:800;min-height:48px}
+.toast{position:absolute;left:16px;right:16px;bottom:112px;background:rgba(22,22,32,.94);color:#fff;font-size:12.5px;font-weight:700;padding:12px 15px;border-radius:12px;text-align:center;z-index:45;opacity:0;transform:translateY(8px);transition:all .2s;pointer-events:none;box-shadow:var(--shadow-m)}
+.toast.on{opacity:1;transform:none}
+
+/* 비교 시트 */
+.sheet{position:absolute;left:0;right:0;bottom:0;background:var(--surface);border-radius:22px 22px 0 0;box-shadow:0 -12px 36px rgba(18,18,40,.2);z-index:50;transform:translateY(103%);transition:transform .26s cubic-bezier(.3,1,.4,1);max-height:88%;display:flex;flex-direction:column}
+.sheet.on{transform:translateY(0)}
+.grab{flex-shrink:0;padding:9px 0 2px;display:flex;justify-content:center}
+.grab i{width:38px;height:4.5px;border-radius:99px;background:var(--line-2)}
+.sheet-h{display:flex;align-items:center;padding:8px 18px 11px;border-bottom:1px solid var(--line)}
+.sheet-h b{font-size:14.5px;font-weight:800;flex:1;letter-spacing:-.01em}
+.sheet-h button{font-size:19px;color:var(--muted);width:32px;height:32px;border-radius:9px;transition:background .15s}
+.sheet-h button:hover{background:var(--bg)}
+.sheet-b{overflow-y:auto;padding:13px 16px 16px}
+.ctable{width:100%;border-collapse:collapse;font-size:11.5px;table-layout:fixed}
+.ctable th,.ctable td{padding:9px 7px;border-bottom:1px solid var(--line);text-align:center;vertical-align:middle;word-break:keep-all}
+.ctable th:first-child,.ctable td:first-child{text-align:left;color:var(--muted);font-weight:700;width:62px}
+.ctable th:nth-child(2),.ctable td:nth-child(2){border-right:1px solid var(--line)}
+.ctable thead th{font-size:12px;font-weight:800;color:var(--text);border-bottom:1.5px solid var(--line-2);line-height:1.35;padding-bottom:11px}
+.ctable thead th:nth-child(2){background:var(--main-ghost);border-radius:8px 0 0 0}
+.ctable thead th:nth-child(3){background:var(--main-ghost);border-radius:0 8px 0 0}
+.ctable .big{font-size:14.5px;font-weight:800;color:var(--main)}
+.ctable .sm{font-size:10.5px;color:var(--muted-2);text-decoration:line-through}
+/* 각 요금제 열에 매핑된 선택 버튼 */
+.ctable tfoot td{padding:14px 7px 4px;border-bottom:none;border-right:none !important}
+.selbtn{width:100%;padding:11px 4px;border-radius:11px;background:var(--main-weak);color:var(--main);font-size:12px;font-weight:800;min-height:46px;transition:all .15s;line-height:1.3}
+.selbtn:hover{background:var(--main);color:#fff;box-shadow:0 4px 12px rgba(91,75,225,.26)}
+.selbtn.on{background:var(--main);color:#fff}
+/* 비교 목록 비우기 — 보조 액션: 아웃라인 필 버튼 (주 CTA와 위계 분리) */
+.sheet-foot{padding:10px 16px 18px;display:flex;justify-content:center}
+.sheet-foot button{display:inline-flex;align-items:center;justify-content:center;gap:7px;font-size:12px;font-weight:700;color:var(--muted);padding:0 18px;min-height:42px;border:1px solid var(--line-2);border-radius:99px;background:var(--surface);transition:all .15s}
+.sheet-foot button:hover{color:var(--err);border-color:#F3C4C4;background:var(--err-bg)}
+.sheet-foot button svg{width:14px;height:14px;flex-shrink:0;stroke:currentColor;stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+/* ===== 시뮬레이터 ===== */
+.scn{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
+.scn button{text-align:left;padding:12px 14px;border:1px solid var(--line);border-radius:13px;background:var(--surface);font-size:12.5px;font-weight:700;display:flex;gap:10px;align-items:flex-start;transition:all .15s}
+.scn button:hover{border-color:var(--main-mid);box-shadow:var(--shadow-s)}
+.scn button.on{border-color:var(--main);background:var(--main-ghost);box-shadow:var(--ring)}
+.scn .tag{flex-shrink:0;font-size:9.5px;font-weight:800;padding:2.5px 7px;border-radius:6px;margin-top:1px;letter-spacing:.02em}
+.tag.n{background:var(--ok-bg);color:var(--ok)}
+.tag.e{background:var(--err-bg);color:var(--err)}
+.tag.w{background:var(--warn-bg);color:var(--warn)}
+.scn small{display:block;font-size:11px;font-weight:600;color:var(--muted);margin-top:2px;line-height:1.5}
+
+.log{background:#13131C;border-radius:15px;padding:14px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:11px;line-height:1.75;max-height:430px;overflow-y:auto;box-shadow:inset 0 2px 8px rgba(0,0,0,.25)}
+.log .ln{display:flex;gap:9px;color:#B9B9C8}
+.log .st{flex-shrink:0;width:58px;color:#6E6E85}
+.log .rs{flex-shrink:0;width:40px;font-weight:700}
+.log .rs.p{color:#4ADE80}
+.log .rs.f{color:#F87171}
+.log .rs.s{color:#64748B}
+.log .rs.i{color:#60A5FA}
+.log .msg{flex:1;word-break:break-word}
+.log .hd{color:#8B7CF6;font-weight:700;margin:7px 0 3px}
+.log .empty2{color:#5A5A70}
+.legend{font-size:11px;color:var(--muted);margin-top:11px;line-height:1.7}
+.legend code{background:var(--bg);padding:1.5px 6px;border-radius:5px;font-size:10.5px;font-weight:700}
+
+/* ===== 리포트 크롬 (r- 접두어로 프로토타입과 분리) ===== */
+body{background:linear-gradient(180deg,#F3F3F8 0%,#EBEBF2 240px,#F3F3F8 100%)}
+.r-head{background:var(--surface);border-bottom:1px solid var(--line)}
+.r-head-in{max-width:1280px;margin:0 auto;padding:30px 28px 24px}
+.r-kicker{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:800;letter-spacing:.06em;color:var(--main);background:var(--main-weak);border-radius:99px;padding:5px 12px}
+.r-h1{font-size:27px;font-weight:800;letter-spacing:-.03em;margin:14px 0 6px;line-height:1.25}
+.r-lead{font-size:13.5px;color:var(--muted);line-height:1.65;max-width:880px}
+.r-meta{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+.r-m{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 14px;min-width:150px}
+.r-m dt{font-size:10.5px;font-weight:800;color:var(--muted-2);letter-spacing:.04em;margin-bottom:3px}
+.r-m dd{font-size:13px;font-weight:700;letter-spacing:-.01em}
+.r-m dd em{font-style:normal;color:var(--main)}
+.r-m.ok dd{color:var(--ok)}
+
+.r-tabsbar{position:sticky;top:0;z-index:90;background:rgba(255,255,255,.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.r-tabs{max-width:1280px;margin:0 auto;padding:0 28px;display:flex;gap:2px;overflow-x:auto}
+.r-tabs button{position:relative;padding:15px 18px;font-size:13.5px;font-weight:700;color:var(--muted);white-space:nowrap;transition:color .15s}
+.r-tabs button:hover{color:var(--text)}
+.r-tabs button.on{color:var(--main)}
+.r-tabs button.on:after{content:'';position:absolute;left:14px;right:14px;bottom:-1px;height:2.5px;background:var(--main);border-radius:2px}
+.r-tabs .n{display:inline-block;font-size:10.5px;font-weight:800;color:var(--muted-2);margin-right:6px}
+.r-tabs button.on .n{color:var(--main)}
+
+.r-main{max-width:1280px;margin:0 auto;padding:34px 28px 90px}
+.r-view{display:none}
+.r-view.on{display:block;animation:fadeIn .26s ease}
+
+.r-sec{margin-bottom:44px}
+.r-sec>h2{font-size:19px;font-weight:800;letter-spacing:-.02em;display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.r-sec>h2 .no{flex-shrink:0;width:26px;height:26px;border-radius:8px;background:var(--main);color:#fff;font-size:12.5px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.r-sec>p.d{font-size:13px;color:var(--muted);line-height:1.7;margin:0 0 18px 36px;max-width:900px}
+.r-sub{font-size:14.5px;font-weight:800;letter-spacing:-.01em;margin:26px 0 10px;display:flex;align-items:center;gap:8px}
+.r-sub .g{font-size:11px;font-weight:800;color:var(--main);background:var(--main-weak);border-radius:6px;padding:2.5px 8px}
+
+.r-card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:var(--shadow-s)}
+.r-card+.r-card{margin-top:14px}
+.r-grid{display:grid;gap:14px}
+.r-g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.r-g3{grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+@media(max-width:760px){.r-grid{grid-template-columns:1fr}}
+
+.r-kpi{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px}
+.r-kpi .v{font-size:25px;font-weight:800;letter-spacing:-.03em;line-height:1.1}
+.r-kpi .l{font-size:11.5px;color:var(--muted);font-weight:600;margin-top:6px;line-height:1.5}
+.r-kpi.warn .v{color:var(--err)}
+.r-kpi.main .v{color:var(--main)}
+.r-kpi.ok .v{color:var(--ok)}
+
+table.r-t{width:100%;border-collapse:collapse;font-size:13px;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+table.r-t th{background:#F6F6FA;text-align:left;padding:11px 14px;font-size:11.5px;font-weight:800;color:var(--muted);letter-spacing:.02em;white-space:nowrap}
+table.r-t td{padding:12px 14px;border-top:1px solid var(--line);vertical-align:top;line-height:1.6}
+table.r-t td.id{white-space:nowrap;width:1%}
+table.r-t tr:hover td{background:#FCFCFE}
+.cid{display:inline-block;font-size:10.5px;font-weight:800;color:var(--main);background:var(--main-weak);border-radius:6px;padding:2.5px 7px;white-space:nowrap}
+.cid.d{color:var(--warn);background:var(--warn-bg)}
+.cid.x{color:var(--err);background:var(--err-bg)}
+.cid.p{color:var(--ok);background:var(--ok-bg)}
+.cid.n{color:var(--muted);background:var(--bg)}
+
+.r-flow{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px;overflow-x:auto}
+.r-flow .fl{display:flex;align-items:center;gap:8px;min-width:600px;margin-bottom:12px;flex-wrap:nowrap}
+.r-flow .fl:last-child{margin-bottom:0}
+.r-flow .tag{flex-shrink:0;font-size:11px;font-weight:800;color:var(--muted);width:96px}
+.r-flow .st{flex-shrink:0;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-size:12px;font-weight:700;white-space:nowrap}
+.r-flow .st.hi{background:var(--main);border-color:var(--main);color:#fff;box-shadow:0 3px 10px rgba(91,75,225,.28)}
+.r-flow .st.dim{opacity:.55}
+.r-flow .st.bad{background:var(--err-bg);border-color:#F0BEBE;color:var(--err);box-shadow:0 3px 10px rgba(220,38,38,.14)}
+.r-flow .ar{flex-shrink:0;color:var(--muted-2);font-size:13px}
+.r-flow .br{flex-shrink:0;background:var(--warn-bg);border:1px dashed var(--warn);border-radius:10px;padding:9px 12px;font-size:11.5px;font-weight:700;color:var(--warn);white-space:nowrap}
+.r-flow .fbr{margin:8px 0 0 104px;padding-left:16px;border-left:2px dashed var(--line-2)}
+.r-flow .fbl{display:flex;align-items:center;gap:8px;min-width:520px;margin-bottom:9px;flex-wrap:nowrap}
+.r-flow .fbl:last-child{margin-bottom:0}
+.r-flow .yn{flex-shrink:0;font-size:10.5px;font-weight:800;padding:4px 9px;border-radius:6px;white-space:nowrap;min-width:46px;text-align:center}
+.r-flow .yn.y{background:var(--ok-bg);color:var(--ok)}
+.r-flow .yn.n{background:var(--warn-bg);color:var(--warn)}
+.r-flow-note{font-size:12px;color:var(--muted);margin-top:14px;padding-top:14px;border-top:1px solid var(--line);line-height:1.7}
+
+.r-ba{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--line);border-radius:14px;overflow:hidden;font-size:12.5px}
+.r-ba>div{padding:16px 18px;line-height:1.7}
+.r-ba .as{background:var(--err-bg)}
+.r-ba .to{background:var(--ok-bg)}
+.r-ba .t{font-size:10.5px;font-weight:800;letter-spacing:.06em;margin-bottom:7px}
+.r-ba .as .t{color:var(--err)}
+.r-ba .to .t{color:var(--ok)}
+@media(max-width:700px){.r-ba{grid-template-columns:1fr}}
+
+.r-note{background:var(--main-ghost);border:1px solid var(--main-weak);border-radius:14px;padding:15px 17px;font-size:12.5px;color:var(--muted);line-height:1.75}
+.r-note b{color:var(--main-deep)}
+.r-note+.r-note{margin-top:10px}
+.r-warn{background:var(--warn-bg);border:1px solid #F3DDB4;border-radius:14px;padding:15px 17px;font-size:12.5px;color:#8A5A08;line-height:1.75}
+.r-warn b{color:#7A4E06}
+
+ul.r-l{margin:0 0 0 19px;font-size:13px;line-height:1.85}
+ul.r-l li{margin-bottom:6px}
+ul.r-l li b{font-weight:800}
+.r-steps{counter-reset:s}
+.r-steps li{list-style:none;position:relative;padding-left:30px;margin-bottom:11px;font-size:13px;line-height:1.7}
+.r-steps li:before{counter-increment:s;content:counter(s);position:absolute;left:0;top:1px;width:20px;height:20px;border-radius:6px;background:var(--main-weak);color:var(--main);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center}
+code.k{background:var(--bg);border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:11.5px;font-weight:700;font-family:ui-monospace,Menlo,Consolas,monospace}
+.r-foot{max-width:1280px;margin:0 auto;padding:0 28px 60px;font-size:11.5px;color:var(--muted-2);line-height:1.8}
+
+</style>
+</head>
+<body>
+
+<header class="r-head">
+  <div class="r-head-in">
+    <span class="r-kicker">UX 개선 프로젝트 · 통합 리포트</span>
+    <h1 class="r-h1">U+유모바일 가입신청서<br>요금제 선택 화면 개선</h1>
+    <p class="r-lead">요금제 선택 화면은 가입 여정에서 유일하게 비교·판단을 요구하는 지점입니다. 확정 직후 화면의 Quick Back 74.6%를 출발점으로, <b>선택과 확정 사이의 단절</b>을 프로세스·화면 양면에서 해소했습니다.</p>
+    <div class="r-meta">
+      <dl class="r-m"><dt>대상 화면</dt><dd>요금제 선택 <em>S-02</em></dd></dl>
+      <dl class="r-m"><dt>개선 범위</dt><dd>화면 전면 개선 + 프로세스 재배치</dd></dl>
+      <dl class="r-m"><dt>분석 기간</dt><dd>2026-06-29 ~ 07-29 <em>30일</em></dd></dl>
+      <dl class="r-m"><dt>근거</dt><dd>Clarity · 시안 · 워크스루</dd></dl>
+      <dl class="r-m ok"><dt>확정 상태</dt><dd>확정 40 · 미확정 0</dd></dl>
+      <dl class="r-m"><dt>디바이스 기준</dt><dd>모바일 우선 <em>81%</em></dd></dl>
+    </div>
+  </div>
+</header>
+
+<div class="r-tabsbar">
+  <nav class="r-tabs">
+    <button id="rb-proto" class="on" onclick="showTab('proto')"><span class="n">01</span>프로토타입</button>
+    <button id="rb-plan" onclick="showTab('plan')"><span class="n">02</span>개선안</button>
+    <button id="rb-func" onclick="showTab('func')"><span class="n">03</span>기능정의</button>
+    <button id="rb-req" onclick="showTab('req')"><span class="n">04</span>요구사항 정의서</button>
+  </nav>
+</div>
+
+<main class="r-main">
+  <section id="rt-proto" class="r-view on">
+<div class="refbar">
+  <span><b>자유 조작</b> — 탭 전환 · 필터 · 정렬 · 카드 선택 · 비교 담기 · 확정까지 실제 동작합니다.</span>
+  <span>선택 시 <span class="kbd">스크롤 유지 C-18</span> 필터·정렬 <span class="kbd">클라이언트 처리</span> 목록 <span class="kbd">점진 렌더 C-39</span> 가격 <span class="kbd">C-30</span> 배지 <span class="kbd">상위 2개 C-37</span> 비교 <span class="kbd">탭 간 유지 C-35</span></span>
+</div>
+<div class="navtabs" style="display:inline-flex;margin-bottom:20px">
+  <button id="nav-proto" class="on" onclick="setView('proto')">자유 조작</button>
+  <button id="nav-sim" onclick="setView('sim')">시나리오 시뮬레이터</button>
+  <button class="reload-top" style="margin-left:6px" onclick="reloadActive()">
+    <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-2.64-6.36M21 3v6h-6"/></svg>리로드</button>
+</div>
+
+<div id="v-proto" class="view on">
+  <div class="solo">
+    <div class="phone-col">
+      <div class="phone" id="ph1"></div>
+      <div class="badge-note">394 × 838 · 모바일 우선 (C-03 · 트래픽 81%)</div>
+    </div>
+  </div>
+</div>
+
+<div id="v-sim" class="view">
+  <div class="split">
+    <div>
+      <div class="panel" style="margin-bottom:18px">
+        <h3><span class="dot"></span>시나리오</h3>
+        <div class="sub">정상 진입 2건 + 예외 1건(조회·필터 결과 0건). 클릭하면 검증 시퀀스가 STEP 단위로 실행됩니다.</div>
+        <div class="scn" id="scnList"></div>
+      </div>
+      <div class="panel">
+        <h3><span class="dot"></span>검증 로그</h3>
+        <div class="sub">기능 정의 2장 검증 시퀀스 기준 · STEP별 PASS / FAIL / SKIP</div>
+        <div class="log" id="logBox"><div class="empty2">시나리오를 선택하세요.</div></div>
+        <div class="legend"><code>PASS</code> 통과 · <code>FAIL</code> 검증 실패(예외 발생) · <code>SKIP</code> 선순위 예외로 미수행 · <code>INFO</code> 상태 기록</div>
+      </div>
+    </div>
+    <div class="panel-side">
+      <div class="phone-col">
+        <div class="phone" id="ph2"></div>
+        <div class="badge-note" id="simState">대기 중</div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+  <section id="rt-plan" class="r-view">
+<div class="r-sec">
+  <h2><span class="no">1</span>개선 배경</h2>
+  <p class="d">요금제 선택 화면은 가입 여정에서 유일하게 <b>비교·판단</b>을 요구하는 지점입니다. 나머지 단계는 모두 2~3개 선택지의 단순 분기이므로, 인지 부하가 이 화면에 집중됩니다. 가입 후 요금 부담을 결정하는 지점이라 재검토 욕구도 구조적으로 강합니다.</p>
+
+  <div class="r-grid r-g3">
+    <div class="r-kpi main"><div class="v">22,253</div><div class="l">화면 진입 규모 (직전 단계 기준 / 30일)</div></div>
+    <div class="r-kpi main"><div class="v">81%</div><div class="l">모바일 세션 비중 — 모바일 우선 설계 전제</div></div>
+    <div class="r-kpi warn"><div class="v">74.6%</div><div class="l">요금제 확정 직후 Quick Back (16,257건, 퍼널 1위)</div></div>
+    <div class="r-kpi warn"><div class="v">4.2만</div><div class="l">동일 카드 패턴 화면의 Dead Click (개통방식)</div></div>
+    <div class="r-kpi"><div class="v">96~97%</div><div class="l">인접 단계 스크롤 심도 — 세로 이동이 곧 이탈 비용</div></div>
+    <div class="r-kpi"><div class="v">14.5초</div><div class="l">버튼 3개뿐인 다음 화면의 평균 체류</div></div>
+  </div>
+
+  <div class="r-sub"><span class="g">가</span>전제 · 트래픽</div>
+  <table class="r-t">
+    <thead><tr><th>ID</th><th>항목</th><th>내용 · 설계 시사점</th></tr></thead>
+    <tbody>
+      <tr><td class="id"><span class="cid">C-01</span></td><td>대상</td><td>가입신청서 요금제 선택 화면</td></tr>
+      <tr><td class="id"><span class="cid">C-02</span></td><td>진입 규모</td><td>직전 단계 기준 22,253 세션 / 30일 — 소폭 개선도 절대 건수 효과가 큼</td></tr>
+      <tr><td class="id"><span class="cid">C-03</span></td><td>디바이스</td><td>모바일 81%(80,120) · PC 18%(17,751) · 태블릿 1,081 → <b>모바일 우선 설계</b></td></tr>
+      <tr><td class="id"><span class="cid">C-04</span></td><td>핵심 행동 신호</td><td>요금제 확정 직후 화면 Quick Back 16,257건(74.6%) — 2위(셀프인증 3,526건)의 4.6배</td></tr>
+      <tr><td class="id"><span class="cid">C-05</span></td><td>인접 지표</td><td>가입자유형 체류 14.5초·이탈 16.3% / 가입유형 11.2초·15.7% / 스크롤 심도 96~97%</td></tr>
+      <tr><td class="id"><span class="cid">C-06</span></td><td>개선 범위</td><td>요금제 선택 화면 + 프로세스 재배치. 상품·가격 정책과 타 단계 UI는 제외</td></tr>
+    </tbody>
+  </table>
+
+  <div class="r-sub"><span class="g">나</span>개선 전 현황 — 문제 근거</div>
+  <p class="d" style="margin-left:0">실제 가입 플로우를 끝까지 진행하며 관찰한 현황입니다. 페인포인트는 <b>"선택과 확정 사이가 끊어져 있다"</b>는 단일 결함에서 파생됩니다.</p>
+  <table class="r-t">
+    <thead><tr><th>ID</th><th>영역</th><th>현황</th><th>결과</th></tr></thead>
+    <tbody>
+      <tr><td class="id"><span class="cid">C-07</span></td><td>선택 동작</td><td>카드 클릭 시 최상단 강제 점프, 카드 자리 피드백 없음</td><td>비교 탐색 맥락 상실</td></tr>
+      <tr><td class="id"><span class="cid">C-08</span></td><td>CTA</td><td>'다음'이 최하단 비고정, 선택 전 비활성·사유 미안내</td><td>선택→확정 동선 단절</td></tr>
+      <tr><td class="id"><span class="cid">C-09</span></td><td>카드</td><td>배지 최대 3종, 정보 병렬 나열, 선택 컨트롤·할인 조건 표기 없음</td><td>어포던스 부재</td></tr>
+      <tr><td class="id"><span class="cid">C-10</span></td><td>그룹핑</td><td>아코디언 7개 중 1개만 펼침, 개수·가격대 힌트 없음</td><td>탐색 비용 과다</td></tr>
+      <tr><td class="id"><span class="cid">C-11</span></td><td>배너</td><td>추천 요금제 3종 자동 회전, 클릭 시 즉시 선택</td><td>오조작 위험</td></tr>
+    </tbody>
+  </table>
+
+  <div class="r-sub" style="font-size:13px">어포던스 문제의 방증 — 동일 카드 패턴 화면의 Dead Click (30일)</div>
+  <table class="r-t">
+    <thead><tr><th>화면</th><th>Dead Click</th><th>구조</th></tr></thead>
+    <tbody>
+      <tr><td>개통방식선택</td><td><b>42,701건</b></td><td>카드형 선택 — 선택 컨트롤 없음</td></tr>
+      <tr><td>유심정보입력</td><td><b>30,577건</b></td><td>카드형 선택 — 선택 컨트롤 없음</td></tr>
+      <tr><td>가입확인</td><td>11,706건</td><td>카드형 정보</td></tr>
+      <tr><td>가입유형</td><td>2,795건</td><td>카드형 선택</td></tr>
+    </tbody>
+  </table>
+  <p class="d" style="margin:10px 0 0">요금제 카드와 같은 '선택 컨트롤 없는 카드' 패턴을 쓰는 화면 전반에서 반복 관측됩니다. C-18(라디오 병행)이 요금제 화면의 이 문제를 해소하지만, <b>동일 패턴을 쓰는 나머지 화면은 개선 범위 밖</b>이라 디자인 시스템 표준화를 후속 과제로 제안합니다.</p>
+
+  <div class="r-note" style="margin-top:14px">
+    <b>연쇄 구조</b> — 선택하면 화면이 위로 튀어 <b>보던 자리를 잃고(C-07)</b>, 확정하려면 최하단까지 <b>다시 내려가야 하며(C-08)</b>, 확정한 뒤에는 무엇을 골랐는지 <b>확인할 방법이 뒤로가기뿐</b>이었습니다. 이 셋이 겹쳐 "확신 없이 다음 → 되돌아옴 → 재선택" 루프를 만들고, 그 결과가 Quick Back 74.6%로 나타납니다.
+  </div>
+</div>
+
+<div class="r-sec">
+  <h2><span class="no">2</span>프로세스 개선</h2>
+  <p class="d">AS-IS에서 요금제 선택은 신청서 흐름 <b>중간의 조건 분기 뒤</b>에 숨어 있었습니다. 가장 어려운 판단이 흐름 후반에, 조건부로 나타난 셈입니다. TO-BE는 분기를 제거하고 판단을 <b>개통 방법 직후로 고정 배치</b>합니다.</p>
+
+  <div class="r-flow">
+    <div class="fl"><span class="tag" style="color:var(--err)">AS-IS</span>
+      <span class="st">개통 방법</span><span class="ar">→</span>
+      <span class="st">상품 정보</span><span class="ar">→</span>
+      <span class="st">가입 방법</span><span class="ar">→</span>
+      <span class="br">요금제 선택됨?</span>
+    </div>
+    <div class="fbr">
+      <div class="fbl"><span class="yn y">예</span><span class="ar">→</span>
+        <span class="st">가입자 유형</span><span class="ar">→</span><span class="st">이후 동일</span>
+      </div>
+      <div class="fbl"><span class="yn n">아니오</span><span class="ar">→</span>
+        <span class="st bad">요금제 선택</span><span class="ar">→</span>
+        <span class="st">가입자 유형</span><span class="ar">→</span><span class="st">이후 동일</span>
+      </div>
+    </div>
+
+    <div class="fl" style="margin-top:20px"><span class="tag" style="color:var(--ok)">TO-BE</span>
+      <span class="st">개통 방법</span><span class="ar">→</span>
+      <span class="br" style="background:var(--ok-bg);border-color:var(--ok);color:var(--ok)">요금제 선택됨?</span>
+    </div>
+    <div class="fbr">
+      <div class="fbl"><span class="yn y">예</span><span class="ar">→</span>
+        <span class="st">상품 정보</span><span class="ar">→</span>
+        <span class="st">가입 방법</span><span class="ar">→</span>
+        <span class="st">가입자 유형</span><span class="ar">→</span><span class="st">이후 동일</span>
+      </div>
+      <div class="fbl"><span class="yn n">아니오</span><span class="ar">→</span>
+        <span class="st hi">요금제 선택</span><span class="ar">→</span>
+        <span class="st">상품 정보</span><span class="ar">→</span>
+        <span class="st">가입 방법</span><span class="ar">→</span>
+        <span class="st">가입자 유형</span><span class="ar">→</span><span class="st">이후 동일</span>
+      </div>
+    </div>
+
+    <div class="r-flow-note">
+      <b>분기는 사라지지 않고 앞으로 이동했습니다.</b> AS-IS는 요금제 보유 여부를 <b>가입 방법 선택 뒤</b>에 판정해, 미선택 사용자가 흐름 후반에 가장 어려운 판단을 만났습니다. TO-BE는 같은 판정을 <b>개통 방법 직후</b>로 옮깁니다.<br><br>
+      <b>재배치 효과 3가지</b><br>
+      ① 가장 어려운 판단을 여정 초반에 완결시켜 이후를 단순 진행으로 만든다<br>
+      ② 판정이 앞당겨져 <b>상품 정보 입력 이후 구간이 두 경로 모두 동일</b>해지므로 이탈 계측이 단순해진다<br>
+      ③ 개통 방법이 선행 확정되므로 미지원 요금제를 <b>목록에서 사전 필터링</b>할 수 있다
+    </div>
+  </div>
+
+  <div class="r-sub"><span class="g">다</span>프로세스 · 시나리오</div>
+  <table class="r-t">
+    <thead><tr><th>ID</th><th>항목</th><th>확정 내용</th></tr></thead>
+    <tbody>
+      <tr><td class="id"><span class="cid">C-19</span></td><td>전진 배치 · CTA</td><td>요금제 선택을 신청서 앞단으로 이동. 확정 CTA는 <b>"개통 시작하기"</b></td></tr>
+      <tr><td class="id"><span class="cid">C-24</span></td><td>TO-BE 위치</td><td>요금제 선택 = <b>개통 방법 직후 · 상품 정보 입력 이전</b>. "선택된 요금제가 있나?" 판정을 흐름 중간에서 <b>진입부로 이동</b>해, 상품 정보 입력 이후 구간을 두 경로 공통의 단일 흐름으로 선형화</td></tr>
+      <tr><td class="id"><span class="cid">C-23</span></td><td>이중 진입 경로</td><td>① 요금제 선택 후 진입(기선택) ② 개통 방법 선택 후 진입(미선택)</td></tr>
+      <tr><td class="id"><span class="cid">C-31</span></td><td>2케이스 시나리오</td><td><b>A</b>(요금제 선택/개통방식 미선택, 기본): 개통방식 화면 유입 + 선택 요금제 <b>정보 노출</b>, 변경 수단 없음 / <b>B</b>(요금제 미선택/개통방식 선택, 대안): 요금제 화면 노출</td></tr>
+      <tr><td class="id"><span class="cid">C-25</span></td><td>기선택 시 스킵</td><td>경로①은 요금제 선택 UI 미노출 — 재노출 자체가 이탈 요인. 요금제 화면은 경로② 전용</td></tr>
+      <tr><td class="id"><span class="cid">C-12</span></td><td>세션 승계</td><td>두 케이스 모두 상품 정보 입력 진입 시점에 요금제 확정 상태 보장</td></tr>
+      <tr><td class="id"><span class="cid">C-33</span></td><td>요금제 단계 예외 없음</td><td>요금제 선택 단계에 표기된 예외 조건 없음 — 유심 유형·가입 방법 제약 요금제 부재</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="r-sec">
+  <h2><span class="no">3</span>화면 개선</h2>
+  <p class="d">배너를 제거하고 그룹핑을 해체해 <b>단일 목록 + 탐색 컨트롤</b> 구조로 재편했습니다. 선택 피드백은 리스트 재배치에서 <b>카드 인라인 상태 변경</b>으로 바꾸고, 확정 수단은 <b>sticky 바</b>로 이관해 선택과 확정을 한 시야에 묶었습니다.</p>
+
+  <div class="r-grid r-g2">
+    <div class="r-ba">
+      <div class="as"><div class="t">AS-IS</div>카드 클릭 → 화면 최상단 점프 → 위치 상실 → 접힌 카테고리 6개 지나 최하단까지 재스크롤 → '다음'</div>
+      <div class="to"><div class="t">TO-BE</div>카드 클릭 → 그 자리에서 보더·라디오 메인 컬러 전환 → sticky 바에 요금제명·요금 요약 + '개통 시작하기' 즉시 노출</div>
+    </div>
+    <div class="r-ba">
+      <div class="as"><div class="t">AS-IS</div>자동 회전 배너 클릭 = 즉시 선택 / 아코디언 7개 중 6개 접힘 · 개수·가격 힌트 없음</div>
+      <div class="to"><div class="t">TO-BE</div>배너 제거 · 실적 기반 주간(BEST) 탭 / 단일 목록 + 개수·필터·정렬·비교 (전 탭 공통)</div>
+    </div>
+  </div>
+
+  <div class="r-sub"><span class="g">라</span>화면 · UI</div>
+  <table class="r-t">
+    <thead><tr><th>ID</th><th>항목</th><th>확정 내용</th></tr></thead>
+    <tbody>
+      <tr><td class="id"><span class="cid">C-13</span></td><td>배너 제거</td><td>자동 회전 추천 배너 전면 제거</td></tr>
+      <tr><td class="id"><span class="cid">C-14</span></td><td>탭</td><td>주간(BEST) / 전체 / LTE / 5G. 주간은 매주 월요일, 지난주 개통 건수 집계</td></tr>
+      <tr><td class="id"><span class="cid">C-27</span></td><td>목록 컨트롤</td><td><b>전 탭 공통</b>: 개수 + 필터 + 정렬 + 비교. 주간은 상위 10개를 확정한 뒤 그 집합 안에서 필터·정렬하며, 카드에는 <b>요금제 고유 순위</b>를 표기(정렬·필터 후에도 값 불변)</td></tr>
+      <tr><td class="id"><span class="cid">C-21</span></td><td>그룹핑 해체</td><td>아코디언 제거, 단일 요금제 목록</td></tr>
+      <tr><td class="id"><span class="cid">C-22</span></td><td>컨트롤 구성</td><td>"요금제 N개" + 필터 + 정렬 (필터 &gt; 정렬 &gt; 비교 순)</td></tr>
+      <tr><td class="id"><span class="cid">C-39</span></td><td>렌더 방식</td><td>단일 목록 유지(페이징·무한스크롤 UI 없음), 스크롤 점진 렌더로 초기 로드 절감</td></tr>
+      <tr><td class="id"><span class="cid">C-15</span></td><td>배지 상한</td><td>카드당 2개 이하</td></tr>
+      <tr><td class="id"><span class="cid">C-37</span></td><td>배지 순서</td><td>상한 초과 시 입력(등록) 순서 기준 상위 2개</td></tr>
+      <tr><td class="id"><span class="cid">C-16</span></td><td>카드 스펙 영역</td><td>데이터·통화·문자 단일 인포 면 (플랫 단색 아이콘, 센터 정렬)</td></tr>
+      <tr><td class="id"><span class="cid">C-17</span></td><td>카드 TOP/BOTTOM</td><td>상단 배지 / 하단 추가 혜택 면으로 강조 정보 분리</td></tr>
+      <tr><td class="id"><span class="cid">C-18</span></td><td>선택 컨트롤</td><td>카드 전체 탭 가능 + 라디오 버튼 병행 노출. 선택 시 <b>스크롤 위치 유지</b></td></tr>
+      <tr><td class="id"><span class="cid">C-26</span></td><td>선택 상태</td><td><b>선택</b>: 카드 보더 메인 컬러 + 두께 굵게, 라디오 채움 / <b>미선택</b>: 배경 없는 옅은 그레이 테두리 + 체크 라인. 색상·두께·채움 삼중 단서</td></tr>
+      <tr><td class="id"><span class="cid">C-20</span></td><td>Sticky</td><td>선택 요금제 정보 + 버튼 영역을 뷰포트 하단 고정</td></tr>
+      <tr><td class="id"><span class="cid">C-35</span></td><td>비교하기</td><td>전 탭 노출. 카드 내 담기 + 상단 <code class="k">비교 N/2</code> 상태. 담은 항목은 <b>탭 이동 시에도 유지</b>, 2건이면 하단 시트로 비교 후 시트에서 바로 선택</td></tr>
+      <tr><td class="id"><span class="cid">C-38</span></td><td>접근성 범위</td><td>터치 타깃 44×44px은 요금제 화면 한정 적용. 퍼널 전체 표준화는 후속</td></tr>
+    </tbody>
+  </table>
+
+  <div class="r-note" style="margin-top:14px">
+    <b>접근성 근거</b> — 선택/미선택을 색상만으로 구분하면 색약·저조도 환경에서 상태를 오인할 수 있습니다. C-26은 색상 외에 <b>라디오 채움 유무(형태)</b>와 <b>보더 두께</b>를 함께 바꿔 WCAG 1.4.1(색상만으로 정보 전달 금지)을 충족합니다.
+  </div>
+</div>
+
+<div class="r-sec">
+  <h2><span class="no">4</span>데이터 · 노출 규칙</h2>
+  <p class="d">화면 구성에 필요한 데이터는 전부 기존 요금제 데이터와 기존 기능으로 충족됩니다. <b>백오피스 신규 관리 항목은 없으며</b>, 유일한 연동 지점은 사용 여부 조건입니다.</p>
+
+  <div class="r-sub"><span class="g">마</span>데이터 · 노출 규칙</div>
+  <table class="r-t">
+    <thead><tr><th>ID</th><th>항목</th><th>확정 내용</th></tr></thead>
+    <tbody>
+      <tr><td class="id"><span class="cid">C-40</span></td><td>노출 조건</td><td>요금제 데이터의 <b>사용 여부가 '사용'인 경우에만 노출</b>. 백오피스와 화면의 유일한 연동 지점이며, 그 외 노출 항목은 전부 기존 데이터·기능 활용</td></tr>
+      <tr><td class="id"><span class="cid">C-30</span></td><td>가격 노출</td><td>판매가 + 프로모션가 구조. 프로모션가 <b>有</b>: 판매가 취소선 + 프로모션가 / <b>無</b>: 판매가만(할인 표기 없음)</td></tr>
+      <tr><td class="id"><span class="cid">C-34</span></td><td>유형 정보 내재화</td><td>제약·유형 정보는 <b>요금제명에 포함</b>되어 전달(예: 청소년 요금제). 카드에 별도 안내 문구 없음</td></tr>
+      <tr><td class="id"><span class="cid">C-29</span></td><td>주간(BEST) 배치</td><td>기실행 집계 로직 재사용. 실패 시 재배치, 미갱신 시 <b>직전 데이터 유지</b>(사용자 고지 없음)</td></tr>
+    </tbody>
+  </table>
+
+  <div class="r-warn" style="margin-top:14px">
+    <b>측정 유의</b> — 프로세스 재배치로 기존 지표(Quick Back 74.6%)와 동일 조건 비교는 불가합니다. 개선 효과는 <b>요금제 화면 확정 클릭률 · 케이스 A/B 비율 · 신청서 선형 구간 이탈률</b>의 신규 기준선으로 측정합니다.
+  </div>
+</div>
+</section>
+  <section id="rt-func" class="r-view">
+<div class="r-sec">
+  <h2><span class="no">1</span>화면 및 URL 정의</h2>
+  <table class="r-t">
+    <thead><tr><th>구분</th><th>화면</th><th>URL</th><th>개발 범위</th><th>내용</th></tr></thead>
+    <tbody>
+      <tr><td class="id"><span class="cid n">S-01</span></td><td>개통 방법 선택</td><td><code class="k">/onsale/joinHowtoOpen</code></td><td><span class="cid d">변경</span></td><td>케이스 A일 때 선택 요금제 정보 영역 추가</td></tr>
+      <tr style="background:var(--main-ghost)"><td class="id"><span class="cid">S-02</span></td><td><b>요금제 선택</b></td><td><code class="k">/onsale/paymentList</code></td><td><span class="cid x">전면 개선</span></td><td>C-13~C-22, C-26·C-27, C-35, C-37~C-40. <b>케이스 B 전용</b>(C-25)</td></tr>
+      <tr><td class="id"><span class="cid n">S-03</span></td><td>상품 정보 입력</td><td><code class="k">/onsale/usimInfoWrite</code></td><td><span class="cid p">변경 없음</span></td><td>위치만 요금제 이후로 이동</td></tr>
+      <tr><td class="id"><span class="cid n">S-04</span></td><td>가입 방법 선택</td><td><code class="k">/onsale/subscriptionType</code></td><td><span class="cid d">변경</span></td><td>중간 요금제 분기 제거 (C-24)</td></tr>
+      <tr><td class="id"><span class="cid n">S-05</span></td><td>가입자 유형 선택</td><td><code class="k">/onsale/subscriberType</code></td><td><span class="cid p">변경 없음</span></td><td>요금제 제약 예외처리가 <b>현재도 반영되어 있음</b>(C-28)</td></tr>
+      <tr><td class="id"><span class="cid n">S-06</span></td><td>이후 단계</td><td>본인확인 이후 전 구간</td><td><span class="cid p">변경 없음</span></td><td>—</td></tr>
+    </tbody>
+  </table>
+
+  <div class="r-sub">요금제 선택 화면(S-02) 영역 구성</div>
+  <table class="r-t">
+    <thead><tr><th>영역</th><th>구성</th><th>근거</th></tr></thead>
+    <tbody>
+      <tr><td>헤더</td><td>"가입하실 요금제를 선택해 주세요."</td><td>표준 문구</td></tr>
+      <tr><td>탭</td><td>주간(BEST) / 전체 / LTE / 5G — 스크롤 시 상단 고정</td><td><span class="cid">C-14</span> <span class="cid">C-27</span></td></tr>
+      <tr><td>목록 컨트롤</td><td>전 탭 공통: "요금제 N개" + 필터 + 정렬 + 비교</td><td><span class="cid">C-22</span> <span class="cid">C-27</span> <span class="cid">C-35</span></td></tr>
+      <tr><td>목록</td><td>단일 목록(그룹 헤더 없음), 스크롤 점진 렌더</td><td><span class="cid">C-21</span> <span class="cid">C-39</span></td></tr>
+      <tr><td>카드</td><td>TOP 배지(≤2) / 요금제명 / 가격 / 스펙 인포 면 / 혜택 면 / 라디오 / 비교 담기</td><td><span class="cid">C-15</span>~<span class="cid">C-18</span> <span class="cid">C-26</span> <span class="cid">C-30</span> <span class="cid">C-37</span></td></tr>
+      <tr><td>Sticky 바</td><td>선택 요금제 요약 + "개통 시작하기"</td><td><span class="cid">C-20</span></td></tr>
+      <tr><td>제거 영역</td><td>상단 추천 배너 · 카테고리 아코디언 · 문서 최하단 CTA</td><td><span class="cid">C-13</span> <span class="cid">C-21</span> <span class="cid">C-20</span></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="r-sec">
+  <h2><span class="no">2</span>검증 시퀀스</h2>
+  <p class="d">진입 → 선택 → 확정까지 STEP 단위 판정 조건입니다. 시뮬레이터 탭에서 각 STEP의 PASS/FAIL을 실제로 확인할 수 있습니다.</p>
+
+  <div class="r-sub">진입 (S-02)</div>
+  <table class="r-t">
+    <thead><tr><th>STEP</th><th>처리</th><th>검증 조건</th><th>실패 시</th></tr></thead>
+    <tbody>
+      <tr><td class="id">1</td><td>진입 경로 판정</td><td>기선택 요금제 존재 여부 — 판정 소스는 <b>유입 파라미터·세션 모두 포함</b></td><td>없음 → 케이스 B (STEP 3)</td></tr>
+      <tr><td class="id">2</td><td>케이스 A 분기</td><td>기선택 유효 <b>AND</b> 사용 여부 = '사용'</td><td>무효 → <b>케이스 B 폴백</b> (요금제 화면 정상 노출)</td></tr>
+      <tr><td class="id">3</td><td>개통 방법 확정 확인</td><td>개통 방법 값 존재</td><td>개통 방법 선택 화면(S-01)으로 이동</td></tr>
+      <tr><td class="id">4</td><td>목록 조회</td><td>사용 여부 = '사용'(C-40) <b>AND</b> 지원 개통 방법에 확정 개통 방법 포함 — 사전 필터</td><td>0건 → <span class="cid x">EX-02</span></td></tr>
+      <tr><td class="id">5</td><td>탭 데이터 구성</td><td>주간: 배치 결과 <b>상위 10개 확정</b> 후 필터·정렬 적용, 카드에는 고유 순위 표기 / 전체·LTE·5G: STEP 4 결과를 네트워크로 분기</td><td>주간 조회 실패 → 직전 데이터 유지 (C-29)</td></tr>
+      <tr><td class="id">6</td><td>카드 렌더</td><td>가격: 프로모션가 유무로 분기(C-30) / 배지: 2개 초과 시 등록 순서 상위 2개(C-37)</td><td>—</td></tr>
+      <tr><td class="id">7</td><td>초기 상태</td><td>선택 없음 — 재진입 시에도 미복원(C-32). Sticky는 안내 문구 + CTA 비활성</td><td>—</td></tr>
+    </tbody>
+  </table>
+  <div class="r-note" style="margin-top:12px">케이스 A는 STEP 2 통과 시 S-02를 렌더하지 않고 S-01로 이동하며, S-01에 선택 요금제 정보를 노출합니다 (C-25 · C-31).</div>
+
+  <div class="r-sub">선택 · 확정 (S-02)</div>
+  <table class="r-t">
+    <thead><tr><th>STEP</th><th>처리</th><th>검증 조건</th><th>실패 시</th></tr></thead>
+    <tbody>
+      <tr><td class="id">8</td><td>카드 선택</td><td>단일 선택 — 기존 선택 자동 해제</td><td>—</td></tr>
+      <tr><td class="id">9</td><td>선택 상태 렌더</td><td>선택: 보더 메인 컬러 + 두께 증가, 라디오 채움 / 미선택: 배경 없는 그레이 아웃라인(C-26). <b>스크롤 위치 유지</b></td><td>—</td></tr>
+      <tr><td class="id">10</td><td>Sticky 갱신</td><td>"{요금제명} 월 {요금}원" + CTA 활성</td><td>—</td></tr>
+      <tr><td class="id">11</td><td>필터·정렬</td><td><b>클라이언트 처리</b>, 리로드 없음. 적용 후 "요금제 N개" 즉시 갱신</td><td>0건 → <span class="cid x">EX-02</span></td></tr>
+      <tr><td class="id">12</td><td>확정 클릭</td><td>선택 요금제 존재</td><td>CTA 비활성 유지 + 안내 토스트</td></tr>
+      <tr><td class="id">13</td><td>사용 여부 재검증</td><td>확정 시점 재조회 — 사용 여부 = '사용'</td><td>선택 해제 후 목록 재조회</td></tr>
+      <tr><td class="id">14</td><td>세션 승계</td><td>선택 요금제를 신청서 세션에 기록 후 S-03 이동 (승계 방식은 개발 분석 단계에서 정의)</td><td>재시도</td></tr>
+    </tbody>
+  </table>
+
+  <div class="r-note" style="margin-top:14px">
+    <b>후속 단계(S-05)는 개발 범위가 아닙니다.</b> 요금제 화면 개선이 가입자 유형 검증의 입력값(선택 요금제)을 바꾸지 않으므로 회귀 영향이 없습니다. 가입자 유형 제약 검증은 현행 로직을 그대로 준용합니다(C-28).
+  </div>
+</div>
+
+<div class="r-sec">
+  <h2><span class="no">3</span>노출 데이터</h2>
+  <div class="r-sub">요금제 카드 (S-02)</div>
+  <table class="r-t">
+    <thead><tr><th>영역</th><th>항목</th><th>노출 형태</th><th>조작</th></tr></thead>
+    <tbody>
+      <tr><td>TOP</td><td>배지</td><td>최대 2개, 등록 순서(C-15·C-37). 비인터랙티브·플랫 처리</td><td>불가</td></tr>
+      <tr><td>—</td><td>요금제명</td><td>텍스트. 가입자 유형 제약 시 명칭에 유형 포함(C-34)</td><td>불가</td></tr>
+      <tr><td>—</td><td>가격</td><td>프로모션가 有: 판매가(취소선) + 프로모션가 / 無: 판매가 단독(C-30)</td><td>불가</td></tr>
+      <tr><td>스펙 면</td><td>데이터·통화·문자 + 속도</td><td>플랫 단색 아이콘 + 값, 센터 정렬. 속도 안내는 스펙 하단(C-16)</td><td>불가</td></tr>
+      <tr><td>혜택 면</td><td>추가 혜택</td><td>별도 면. 해당 없으면 영역 미노출(C-17)</td><td>불가</td></tr>
+      <tr><td>우측 상단</td><td>라디오</td><td>선택/미선택 2상태(C-26)</td><td><b>선택</b></td></tr>
+      <tr><td>우측 하단</td><td>비교 담기</td><td>체크 + 라벨. 카드 선택과 이벤트 분리(C-35)</td><td><b>담기/해제</b></td></tr>
+      <tr><td>카드 전체</td><td>—</td><td>탭 영역(C-18)</td><td><b>선택</b></td></tr>
+    </tbody>
+  </table>
+
+  <div class="r-sub">컨트롤 · Sticky</div>
+  <table class="r-t">
+    <thead><tr><th>영역</th><th>항목</th><th>노출 형태</th><th>조작</th></tr></thead>
+    <tbody>
+      <tr><td>탭</td><td>주간(BEST)</td><td>상위 10개 집합 + 개수·필터·정렬·비교. 정렬 기본 라벨 "주간 순위순"(C-27·C-29)</td><td>탭 전환</td></tr>
+      <tr><td>탭</td><td>전체 / LTE / 5G</td><td>개수 + 필터 + 정렬 + 비교. 정렬 기본 라벨 "추천순"(C-27)</td><td>탭 전환</td></tr>
+      <tr><td>카드</td><td>주간 순위 배지</td><td>요금제 고유 순위. <b>필터·정렬 후에도 값 불변</b>(목록 인덱스 아님)</td><td>불가</td></tr>
+      <tr><td>컨트롤</td><td>요금제 개수</td><td>"요금제 N개" — 필터 적용 시 즉시 갱신(C-22)</td><td>불가</td></tr>
+      <tr><td>컨트롤</td><td>필터</td><td>펼침 시 chevron 회전 + 적용 개수 표기. 패널: 데이터 제공량 / 월 기본료 + 초기화 · 결과 N개 보기</td><td><b>조작</b></td></tr>
+      <tr><td>컨트롤</td><td>정렬</td><td>클라이언트 처리, 리로드 없음</td><td><b>조작</b></td></tr>
+      <tr><td>컨트롤</td><td>비교</td><td>담긴 개수 상시 표기(<code class="k">비교 N/2</code>), 탭 이동 시 유지(C-35)</td><td><b>조작</b></td></tr>
+      <tr><td>Sticky</td><td>선택 요약</td><td>미선택: "요금제를 선택해 주세요." / 선택: "{요금제명} 월 {요금}원"</td><td>불가</td></tr>
+      <tr><td>Sticky</td><td>CTA</td><td>"개통 시작하기" — 미선택 비활성 / 선택 활성</td><td><b>활성 시 클릭</b></td></tr>
+    </tbody>
+  </table>
+
+  <div class="r-sub">비교 시트</div>
+  <table class="r-t">
+    <thead><tr><th>영역</th><th>구성</th></tr></thead>
+    <tbody>
+      <tr><td>비교 항목</td><td>월 요금 / 판매가 / 데이터 / <b>QOS</b> / 통화·문자 — 5개 축</td></tr>
+      <tr><td>대상 수</td><td>최대 2개 (모바일 열 비교 가독성 기준)</td></tr>
+      <tr><td>선택 연결</td><td>각 요금제 <b>열 아래에 매핑된</b> "요금제 선택" 버튼. 선택 시 시트 닫힘 + 카드 선택 상태 + Sticky 갱신</td></tr>
+      <tr><td>보조 액션</td><td>"비교 목록 비우기" — 아웃라인 버튼으로 주 CTA와 위계 분리</td></tr>
+    </tbody>
+  </table>
+
+  <div class="r-sub">개통 방법 화면(S-01) — 케이스 A 추가 영역</div>
+  <table class="r-t">
+    <thead><tr><th>항목</th><th>노출 형태</th><th>조작</th></tr></thead>
+    <tbody>
+      <tr><td>선택 요금제 정보</td><td>요금제명 + 가격(C-30) + 스펙 인포 면(C-16 구성 재사용)</td><td>불가 — <b>변경 수단 미제공</b>(C-31)</td></tr>
+    </tbody>
+  </table>
+  <div class="r-note" style="margin-top:12px">카드와 동일한 정보 구성을 재사용해 두 케이스 간 표기 일관성을 유지합니다.</div>
+</div>
+
+<div class="r-sec">
+  <h2><span class="no">4</span>예외 처리</h2>
+  <p class="d">요금제 선택 화면에서 사용자에게 별도 처리를 노출하는 예외는 <b>조회·필터 결과 0건</b> 한 건입니다. 그 외 상황은 화면이 스스로 정상 상태로 수렴하므로 예외로 정의하지 않습니다.</p>
+
+  <table class="r-t">
+    <thead><tr><th>ID</th><th>예외 케이스</th><th>발생 조건</th><th>상태 처리</th><th>메시지</th><th>확인 시 이동</th></tr></thead>
+    <tbody>
+      <tr><td class="id"><span class="cid x">EX-02</span></td><td>조회·필터 결과 0건</td><td>목록 0건 (STEP 4 · STEP 11)</td><td>목록 영역만 빈 상태로 전환. <b>탭·컨트롤은 그대로 유지</b></td><td>인라인 빈 상태 메시지 + 필터 초기화</td><td>없음</td></tr>
+    </tbody>
+  </table>
+
+  <div class="r-sub">처리 규칙</div>
+  <table class="r-t">
+    <thead><tr><th>구분</th><th>규칙</th></tr></thead>
+    <tbody>
+      <tr><td>형태</td><td><b>Alert 없음</b> — 목록 영역 내 인라인 빈 상태로만 표현</td></tr>
+      <tr><td>유지 요소</td><td>탭 네비게이터 · 요금제 개수 · 필터 · 정렬 · 비교. 적용 중인 필터는 <code class="k">필터 · N</code>으로 원인을 드러냄</td></tr>
+      <tr><td>복구 수단</td><td>빈 상태 영역의 <b>필터 초기화</b> 버튼, 또는 필터 패널 내 초기화</td></tr>
+      <tr><td>Sticky</td><td>선택이 없으므로 안내 문구 + 비활성 CTA 상태 유지</td></tr>
+      <tr><td>발생 시점</td><td>진입 시 조회 결과 0건(STEP 4) / 필터·정렬 적용 결과 0건(STEP 11) — 두 경우 처리 동일</td></tr>
+    </tbody>
+  </table>
+
+  <div class="r-sub">Alert을 두지 않는 근거</div>
+  <ul class="r-l">
+    <li><b>사용자 조작의 정상 결과입니다.</b> 필터를 좁히면 0건이 나올 수 있고, 이는 오류가 아니라 조건에 맞는 상품이 없다는 정보입니다. 실제로 데이터·요금 조건 조합 16가지 중 3가지(19%)가 0건이므로 드문 상황도 아닙니다.</li>
+    <li><b>Alert은 맥락을 가립니다.</b> 확인 클릭을 강제하면 어떤 조건 때문에 0건인지 보여주는 컨트롤 영역이 가려집니다. 인라인 처리는 조건과 결과를 한 화면에 두어 즉시 되돌릴 수 있게 합니다.</li>
+    <li><b>복구가 한 번의 탭으로 끝납니다.</b> 필터 초기화 버튼이 빈 상태 안에 있으므로 별도 이동이 필요 없습니다.</li>
+  </ul>
+</div>
+
+<div class="r-sec">
+  <h2><span class="no">5</span>데이터 연동 · 백오피스</h2>
+  <p class="d">본 개선은 백오피스 신규 개발·관리 항목을 요구하지 않습니다.</p>
+  <table class="r-t">
+    <thead><tr><th>화면 요소</th><th>필요 데이터</th><th>조달</th></tr></thead>
+    <tbody>
+      <tr><td>요금제명·유형 표기</td><td>요금제명 (C-34)</td><td>기존 데이터</td></tr>
+      <tr><td>가격 (취소선 + 강조)</td><td>판매가 / 프로모션가 (C-30)</td><td>기존 기능</td></tr>
+      <tr><td>배지 최대 2개</td><td>배지 목록 + 등록 순서 (C-15·C-37)</td><td>기존 등록 순서 활용</td></tr>
+      <tr><td>스펙 인포 면</td><td>데이터·통화·문자·속도 (C-16)</td><td>기존 데이터</td></tr>
+      <tr><td>혜택 면</td><td>추가 혜택 (C-17)</td><td>기존 데이터, 미보유 시 미노출</td></tr>
+      <tr><td>탭 분기</td><td>네트워크 구분 (C-14)</td><td>기존 데이터</td></tr>
+      <tr><td>목록 사전 필터</td><td>지원 개통 방법 (STEP 4)</td><td>기존 데이터</td></tr>
+      <tr><td>유형 제약 판정</td><td>허용 가입자 유형 (S-05)</td><td>기존 데이터 — 현행 예외처리가 사용 중</td></tr>
+      <tr><td>주간(BEST) 목록</td><td>배치 결과 (C-29)</td><td>기실행 배치 재사용</td></tr>
+    </tbody>
+  </table>
+
+  <div class="r-note" style="margin-top:14px">
+    <b>유일한 연동 지점 — 사용 여부(C-40)</b><br>
+    백오피스에서 요금제를 미사용으로 변경하면 목록에서 즉시 제외되고(STEP 4), 이미 선택한 진행 중 세션은 확정 시점 재검증(STEP 13)에서 선택이 해제되고 목록이 갱신됩니다.
+  </div>
+</div>
+</section>
+  <section id="rt-req" class="r-view">
+<div class="r-grid r-g3" style="margin-bottom:30px">
+  <div class="r-kpi ok"><div class="v">40</div><div class="l">확정 사항 (C-01 ~ C-40)</div></div>
+  <div class="r-kpi ok"><div class="v">0</div><div class="l">미확정 사항 — 기획 확정 완결</div></div>
+  <div class="r-kpi"><div class="v">5</div><div class="l">핵심 페인포인트 (P1 ~ P5) — 전건 해소</div></div>
+  <div class="r-kpi"><div class="v">6</div><div class="l">개선 원칙 (G-01 ~ G-06)</div></div>
+</div>
+
+<div class="r-sec">
+  <h2><span class="no">1</span>핵심 문제 정의</h2>
+  <p class="d">페인포인트는 <b>"선택과 확정 사이가 끊어져 있다"</b>는 단일 결함에서 파생됩니다.</p>
+  <table class="r-t">
+    <thead><tr><th>ID</th><th>우선순위</th><th>페인포인트</th><th>근거</th><th>해소 설계</th><th>판정</th></tr></thead>
+    <tbody>
+      <tr><td class="id"><b>P1</b></td><td><span class="cid x">Critical</span></td><td>선택 시 최상단 점프로 맥락 파괴, 카드 자리 피드백 없음</td><td>C-07, 스크롤 심도 96%+</td><td>C-18 · C-21 · C-26</td><td><span class="cid p">해소</span></td></tr>
+      <tr><td class="id"><b>P2</b></td><td><span class="cid x">Critical</span></td><td>확정 CTA 최하단 비고정 + 비활성 사유 미안내</td><td>C-08, 모바일 81%</td><td>C-19 · C-20</td><td><span class="cid p">해소</span></td></tr>
+      <tr><td class="id"><b>P3</b></td><td><span class="cid d">High</span></td><td>확신 없이 확정 후 되돌아오는 재선택 루프</td><td>C-04 Quick Back 74.6%</td><td>C-19 · C-23~C-25 · C-28 · C-31</td><td><span class="cid p">구조적 해소</span></td></tr>
+      <tr><td class="id"><b>P4</b></td><td><span class="cid d">High</span></td><td>카드 선택 어포던스 부재, 장식 요소의 클릭 기대</td><td>C-09, Dead Click 4.2만</td><td>C-15~C-18 · C-26 · C-37</td><td><span class="cid p">해소</span></td></tr>
+      <tr><td class="id"><b>P5</b></td><td><span class="cid">Medium</span></td><td>배너 오조작 · 그룹핑 탐색 비용 · 가격 근거 불명</td><td>C-10 · C-11</td><td>C-13 · C-14 · C-21 · C-22 · C-27 · C-29 · C-30</td><td><span class="cid p">해소</span></td></tr>
+    </tbody>
+  </table>
+  <div class="r-note" style="margin-top:12px">
+    <b>우선순위 근거</b> — P1·P2는 모든 사용자가 매번 겪는 구조적 마찰(워크스루로 직접 재현), P3·P4는 데이터로 규모가 확인된 이탈·왕복 요인, P5는 조건부 마찰입니다.
+  </div>
+</div>
+
+<div class="r-sec">
+  <h2><span class="no">2</span>개선 원칙</h2>
+  <table class="r-t">
+    <thead><tr><th>ID</th><th>원칙</th><th>내용</th></tr></thead>
+    <tbody>
+      <tr><td class="id"><span class="cid">G-01</span></td><td>선택-확정 무결성</td><td>선택부터 확정까지 화면 이동이 필요 없다</td></tr>
+      <tr><td class="id"><span class="cid">G-02</span></td><td>맥락 보존</td><td>시스템이 스크롤 위치·탐색 맥락을 임의로 바꾸지 않는다</td></tr>
+      <tr><td class="id"><span class="cid">G-03</span></td><td>모바일 우선</td><td>모바일(81%) 기준 설계, PC는 반응형 수용</td></tr>
+      <tr><td class="id"><span class="cid">G-04</span></td><td>판단과 진행의 분리</td><td>비교·판단은 여정 초반에 완결, 신청서는 진행만 담당</td></tr>
+      <tr><td class="id"><span class="cid">G-05</span></td><td>측정 가능한 개선</td><td>개선별 관측 지표와 로깅을 사전 정의</td></tr>
+      <tr><td class="id"><span class="cid">G-06</span></td><td>추천의 설명 가능성</td><td>추천·정렬 기준은 검증 가능한 실적 기반</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="r-sec">
+  <h2><span class="no">3</span>공통 기준 (Baseline)</h2>
+  <p class="d">후속 산출물은 별도 이슈 목록을 두지 않고 이 절의 ID를 참조합니다. 변경 시 이 절을 먼저 갱신하고 본문에 반영합니다.</p>
+
+  <div class="r-sub"><span class="g">바</span>상태 · 예외 정책</div>
+  <table class="r-t">
+    <thead><tr><th>ID</th><th>항목</th><th>확정 내용</th></tr></thead>
+    <tbody>
+      <tr><td class="id"><span class="cid">C-32</span></td><td>재진입 미복원</td><td>이탈 후 첫 페이지 재진입 시 이전 선택을 복원하지 않음(초기 상태)</td></tr>
+      <tr><td class="id"><span class="cid">C-36</span></td><td>변경 시 데이터 처리</td><td>요금제 변경 시 신청서 데이터를 <b>최종 선택 요금제로 갱신</b>(기입력값 유지 + 요금제만 교체)</td></tr>
+      <tr><td class="id"><span class="cid">C-28</span></td><td>가입자 유형 제약</td><td>제한 요금제는 사전 필터링 없이 가입자 유형 선택 단계에서 예외처리 — <b>현행 반영되어 있어 현행 유지</b></td></tr>
+    </tbody>
+  </table>
+  <p class="d" style="margin:10px 0 0">가·나·다·라·마 그룹은 <b>개선안</b> 탭에서 리포트 형식으로 전개했습니다.</p>
+
+  <div class="r-sub">표준 문구 · 명칭</div>
+  <p class="d" style="margin:0 0 10px">확정된 카피의 원본 목록입니다. 각 문구가 <b>어디에 어떤 상태로 노출되는지</b>는 기능정의 탭 3장 「노출 데이터」에서 다룹니다.</p>
+  <table class="r-t">
+    <thead><tr><th>구분</th><th>확정 값</th></tr></thead>
+    <tbody>
+      <tr><td>화면 헤드라인</td><td>"가입하실 요금제를 선택해 주세요."</td></tr>
+      <tr><td>확정 CTA</td><td>"개통 시작하기"</td></tr>
+      <tr><td>Sticky 미선택 / 선택</td><td>"요금제를 선택해 주세요." / "{요금제명} 월 {프로모션가}원"</td></tr>
+      <tr><td>탭 명칭</td><td>주간(BEST) / 전체 / LTE / 5G</td></tr>
+      
+    </tbody>
+  </table>
+
+  </div>
+
+<div class="r-sec">
+  <h2><span class="no">4</span>측정 기준</h2>
+  <p class="d">근거 데이터(Clarity · 2026-06-29~07-29 30일)의 상세 수치는 <b>개선안 탭 1장 「개선 배경」</b>에 전개했습니다. 여기서는 개선 효과를 판정하는 기준만 정의합니다.</p>
+  <table class="r-t">
+    <thead><tr><th>구분</th><th>기준</th></tr></thead>
+    <tbody>
+      <tr><td>비교 불가 사유</td><td>프로세스 재배치(C-19·C-24)로 화면 순서가 바뀌어, 기존 Quick Back 74.6%와 <b>동일 조건 비교가 불가</b>합니다. 이 수치는 개선의 동기이자 참조값으로만 사용합니다.</td></tr>
+      <tr><td>신규 기준선</td><td>① 요금제 화면 확정 클릭률 ② 케이스 A/B 진입 비율 ③ 신청서 선형 구간 단계별 이탈률 ④ 요금제 변경 목적 이탈률</td></tr>
+      <tr><td>보조 관측</td><td>필터·정렬 사용률 · 비교 사용률과 비교 후 선택 전환율 · 탭별 선택 분포 · Dead Click 건수</td></tr>
+      <tr><td>해석 규칙</td><td>데이터로 확인되지 않은 인과 해석은 <b>신호·추정</b>으로 표기합니다.</td></tr>
+    </tbody>
+  </table>
+</div>
+</section>
+</main>
+
+<div class="r-foot">
+  근거 문서 — 요구사항 분석 설계서 v6.2 · 상세 기능 정의서 v2.2 · 시스템 아키텍처 v1.0 · 화면 와이어프레임 v1.2 · 동작 프로토타입<br>
+  프로토타입의 요금제 데이터는 실제 관측 요금제 8종에 검증용 케이스를 더한 샘플이며, 5G는 샘플입니다.
+</div>
+
+<script>
+
+/* =========================================================
+   데이터 — 요금제 (샘플: 실제 관측 요금제 + 검증용 케이스)
+   필드는 시스템 아키텍처 4.1 데이터 계약 기준
+   ========================================================= */
+var PLANS = [
+  {code:'P01', name:'LTE 스페셜 플러스', net:'LTE', sale:46600, promo:38200, data:'100GB', dataV:100, voice:'기본제공', sms:'기본제공', speed:'최대 5M bps 속도로 데이터 무제한', badges:['BEST','U+인터넷결합','매월 데이터 10GB 추가'], benefit:null, open:['self','agent'], sub:['adult','foreigner'], use:true, rank:1},
+  {code:'P02', name:'LTE 스페셜', net:'LTE', sale:49390, promo:32990, data:'11GB+일2GB', dataV:71, voice:'기본제공', sms:'기본제공', speed:'최대 3M bps 속도로 데이터 무제한', badges:['BEST','U+인터넷결합'], benefit:'매월 다이소 5천원 혜택 (24개월)', open:['self','agent'], sub:['adult','foreigner'], use:true, rank:2},
+  {code:'P03', name:'LTE (15GB+/통화기본)', net:'LTE', sale:48400, promo:20900, data:'15GB', dataV:15, voice:'기본제공', sms:'기본제공', speed:'최대 1M bps 속도로 데이터 무제한', badges:['BEST','랜덤결합'], benefit:'매월 다이소 5천원 혜택 (24개월)', open:['self','agent'], sub:['adult','foreigner'], use:true, rank:3},
+  {code:'P04', name:'LTE (10GB+/통화기본)', net:'LTE', sale:41950, promo:18900, data:'10GB', dataV:10, voice:'기본제공', sms:'기본제공', speed:'최대 1M bps 속도로 데이터 무제한', badges:['랜덤결합'], benefit:'매월 다이소 5천원 혜택 (24개월)', open:['self','agent'], sub:['adult','foreigner'], use:true, rank:5},
+  {code:'P05', name:'LTE (7GB+/통화기본)', net:'LTE', sale:39800, promo:15900, data:'7GB', dataV:7, voice:'기본제공', sms:'기본제공', speed:'최대 1M bps 속도로 데이터 무제한', badges:['BEST','랜덤결합'], benefit:'매월 다이소 5천원 혜택 (24개월)', open:['self','agent'], sub:['adult','foreigner'], use:true, rank:4},
+  {code:'P06', name:'LTE (1GB+/통화기본)', net:'LTE', sale:25300, promo:9900, data:'1GB', dataV:1, voice:'기본제공', sms:'기본제공', speed:'최대 1M bps 속도로 데이터 무제한', badges:['BEST'], benefit:'매월 다이소 5천원 혜택 (24개월)', open:['self','agent'], sub:['adult','foreigner'], use:true, rank:6},
+  {code:'P07', name:'LTE 스페셜 프로', net:'LTE', sale:45900, promo:38200, data:'일5GB', dataV:150, voice:'기본제공', sms:'기본제공', speed:'최대 5M bps 속도로 데이터 무제한', badges:['U+인터넷결합','랜덤결합'], benefit:null, open:['self','agent'], sub:['adult'], use:true, rank:8},
+  {code:'P08', name:'LTE (4.5GB+/통화기본)', net:'LTE', sale:36600, promo:13900, data:'(4.5+10)GB', dataV:14.5, voice:'기본제공', sms:'기본제공', speed:'최대 1M bps 속도로 데이터 무제한', badges:[], benefit:null, open:['self','agent'], sub:['adult','foreigner'], use:true, rank:7},
+  {code:'P09', name:'LTE 데이터 세이브', net:'LTE', sale:21450, promo:null, data:'3GB', dataV:3, voice:'기본제공', sms:'기본제공', speed:'소진 시 차단', badges:['프로모션 없음'], benefit:null, open:['self','agent'], sub:['adult','foreigner'], use:true, rank:null},
+  {code:'P10', name:'LTE 청소년 안심 요금제', net:'LTE', sale:29700, promo:19800, data:'6GB', dataV:6, voice:'기본제공', sms:'기본제공', speed:'최대 1M bps 속도로 데이터 무제한', badges:['청소년 전용'], benefit:null, open:['agent'], sub:['youth'], use:true, rank:9},
+  {code:'P11', name:'LTE 통화 전용', net:'LTE', sale:12100, promo:8800, data:'데이터 제로', dataV:0, voice:'기본제공', sms:'기본제공', speed:'데이터 미제공', badges:[], benefit:null, open:['self','agent'], sub:['adult','foreigner'], use:true, rank:10},
+  {code:'P12', name:'LTE 알뜰 300분', net:'LTE', sale:9900, promo:6600, data:'1.5GB', dataV:1.5, voice:'300분', sms:'100건', speed:'소진 시 차단', badges:[], benefit:null, open:['agent'], sub:['adult'], use:true, rank:null},
+  {code:'P13', name:'LTE 상담사 전용 프로', net:'LTE', sale:44000, promo:29700, data:'50GB', dataV:50, voice:'기본제공', sms:'기본제공', speed:'최대 3M bps 속도로 데이터 무제한', badges:['상담사 전용'], benefit:null, open:['agent'], sub:['adult'], use:true, rank:null},
+  {code:'P14', name:'LTE 한정 요금제', net:'LTE', sale:33000, promo:24200, data:'8GB', dataV:8, voice:'기본제공', sms:'기본제공', speed:'최대 1M bps 속도로 데이터 무제한', badges:['한정'], benefit:null, open:['self','agent'], sub:['adult'], use:true, rank:null},
+  {code:'G01', name:'5G 스탠다드', net:'5G', sale:55000, promo:44000, data:'110GB', dataV:110, voice:'기본제공', sms:'기본제공', speed:'최대 5M bps 속도로 데이터 무제한', badges:['BEST','U+인터넷결합'], benefit:'매월 다이소 5천원 혜택 (24개월)', open:['self','agent'], sub:['adult','foreigner'], use:true, rank:null},
+  {code:'G02', name:'5G 라이트', net:'5G', sale:39600, promo:30800, data:'31GB', dataV:31, voice:'기본제공', sms:'기본제공', speed:'최대 1M bps 속도로 데이터 무제한', badges:['랜덤결합'], benefit:null, open:['self','agent'], sub:['adult','foreigner'], use:true, rank:null},
+  {code:'G03', name:'5G 미니', net:'5G', sale:26400, promo:19800, data:'8GB', dataV:8, voice:'기본제공', sms:'기본제공', speed:'최대 1M bps 속도로 데이터 무제한', badges:[], benefit:null, open:['self','agent'], sub:['adult','foreigner'], use:true, rank:null},
+  {code:'G04', name:'5G 프리미엄 무제한', net:'5G', sale:79200, promo:66000, data:'무제한', dataV:999, voice:'기본제공', sms:'기본제공', speed:'속도 제어 없음', badges:['BEST','U+인터넷결합','랜덤결합'], benefit:'매월 다이소 5천원 혜택 (24개월)', open:['self','agent'], sub:['adult'], use:true, rank:null},
+  {code:'G05', name:'5G 데이터 세이브', net:'5G', sale:23100, promo:null, data:'4GB', dataV:4, voice:'기본제공', sms:'기본제공', speed:'소진 시 차단', badges:['프로모션 없음'], benefit:null, open:['self','agent'], sub:['adult','foreigner'], use:true, rank:null},
+  {code:'G06', name:'5G 청소년 요금제', net:'5G', sale:35200, promo:26400, data:'12GB', dataV:12, voice:'기본제공', sms:'기본제공', speed:'최대 1M bps 속도로 데이터 무제한', badges:['청소년 전용'], benefit:null, open:['agent'], sub:['youth'], use:true, rank:null},
+  {code:'X01', name:'LTE 종료 요금제 (미사용)', net:'LTE', sale:30800, promo:22000, data:'5GB', dataV:5, voice:'기본제공', sms:'기본제공', speed:'최대 1M bps', badges:[], benefit:null, open:['self','agent'], sub:['adult'], use:false, rank:null}
+];
+
+var BADGE_CLASS = {'BEST':'best','U+인터넷결합':'combo','랜덤결합':'combo','청소년 전용':'combo','상담사 전용':'combo'};
+var OPEN_LABEL = {self:'셀프 개통', agent:'상담사 개통'};
+
+/* =========================================================
+   상태
+   ========================================================= */
+function newState(mode){
+  return {
+    mode: mode, screen: 'plan', tab: 'weekly',
+    selected: null, openMethod: 'agent',
+    preSelected: null, caseType: 'B',
+    compare: [],
+    filterOpen: false, fPrice: '', fData: '', sort: 'reco',
+    weeklyStale: false, forceEmpty: false,
+    rendered: 8, alert: null, toast: null, sheet: false,
+    log: [], scenario: null
+  };
+}
+var S = { proto: newState('proto'), sim: newState('sim') };
+var activeView = 'proto';
+
+/* =========================================================
+   조회 로직 — STEP 4 / 5 / 11
+   ========================================================= */
+function baseList(st){
+  return PLANS.filter(function(p){
+    if(!p.use) return false;                                   // C-40
+    if(st.openMethod && p.open.indexOf(st.openMethod) < 0) return false;  // 개통방법 사전 필터
+    return true;
+  });
+}
+function tabList(st){
+  var L = baseList(st);
+  if(st.tab === 'weekly'){
+    // 지난주 개통 건수 상위 10개를 확정한 뒤, 그 안에서 필터·정렬 적용 (C-27)
+    var wk = L.filter(function(p){ return p.rank; })
+              .sort(function(a,b){ return a.rank - b.rank; })
+              .slice(0,10);
+    return applyCtrl(st, wk);
+  }
+  if(st.tab === 'lte') L = L.filter(function(p){ return p.net==='LTE'; });
+  if(st.tab === 'g5')  L = L.filter(function(p){ return p.net==='5G'; });
+  return applyCtrl(st, L);
+}
+function applyCtrl(st, L){
+  if(st.forceEmpty) return [];
+  if(st.fPrice){
+    L = L.filter(function(p){
+      var v = price(p);
+      if(st.fPrice==='a') return v < 20000;
+      if(st.fPrice==='b') return v >= 20000 && v < 35000;
+      return v >= 35000;
+    });
+  }
+  if(st.fData){
+    L = L.filter(function(p){
+      if(st.fData==='a') return p.dataV >= 50;
+      if(st.fData==='b') return p.dataV >= 10 && p.dataV < 50;
+      return p.dataV < 10;
+    });
+  }
+  L = L.slice();
+  if(st.sort === 'price') L.sort(function(a,b){ return price(a)-price(b); });
+  else if(st.sort === 'data') L.sort(function(a,b){ return b.dataV-a.dataV; });
+  return L;
+}
+function price(p){ return p.promo != null ? p.promo : p.sale; }
+function won(n){ return n.toLocaleString('ko-KR') + '원'; }
+function find(code){ for(var i=0;i<PLANS.length;i++) if(PLANS[i].code===code) return PLANS[i]; return null; }
+function isCurated(st){ return st.tab === 'weekly'; }
+
+/* =========================================================
+   렌더
+   ========================================================= */
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+/* 플랫·단색 아이콘 (데이터 / 통화 / 문자) */
+var ICON = {
+  data: '<svg viewBox="0 0 24 24" aria-hidden="true"><line x1="6" y1="20" x2="6" y2="14"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="18" y1="20" x2="18" y2="10"/></svg>',
+  call: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 16.9v2.6a1.5 1.5 0 0 1-1.6 1.5 18.5 18.5 0 0 1-8-2.9 18.2 18.2 0 0 1-5.6-5.6A18.5 18.5 0 0 1 2.9 4.5 1.5 1.5 0 0 1 4.4 3H7a1.5 1.5 0 0 1 1.5 1.3c.1.9.3 1.7.6 2.5a1.5 1.5 0 0 1-.4 1.6L7.6 9.5a15 15 0 0 0 5.6 5.6l1.1-1.1a1.5 1.5 0 0 1 1.6-.4c.8.3 1.6.5 2.5.6A1.5 1.5 0 0 1 21 16.9z"/></svg>',
+  sms:  '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="4.5" width="19" height="15" rx="2"/><polyline points="21 6 12 12.5 3 6"/></svg>'
+};
+function infoChips(p){
+  return '<div class="chips">'
+    + '<span aria-label="데이터 ' + esc(p.data) + '">' + ICON.data + esc(p.data) + '</span>'
+    + '<span aria-label="통화 ' + esc(p.voice) + '">' + ICON.call + esc(p.voice) + '</span>'
+    + '<span aria-label="문자 ' + esc(p.sms) + '">' + ICON.sms + esc(p.sms) + '</span>'
+    + '</div>';
+}
+
+function render(key){
+  var st = S[key];
+  var el = document.getElementById(key === 'proto' ? 'ph1' : 'ph2');
+  var body = '';
+  if(st.screen === 'plan')      body = viewPlan(st, key);
+  else if(st.screen === 's01')  body = viewS01(st, key);
+  else                          body = viewS03(st, key);
+
+  el.innerHTML =
+    '<div class="notch"><i></i></div>' +
+    '<div class="ph-status"><span>LTE</span><span>오후 3:12</span><span>70%</span></div>' +
+    '<div class="ph-head"><span class="ic">&#8249;</span><span class="t">가입신청서</span><span class="ic" style="text-align:right">&#215;</span></div>' +
+    body +
+    (st.sheet && st.compare.length === 2 ? sheetHtml(st, key) : '') +
+    '<div class="dim' + (st.alert ? ' on' : '') + '">' +
+      (st.alert ? '<div class="alert"><p>' + esc(st.alert.msg) + '</p><button onclick="okAlert(\'' + key + '\')">확인</button></div>' : '') +
+    '</div>' +
+    '<div class="toast' + (st.toast ? ' on' : '') + '">' + esc(st.toast || '') + '</div>';
+
+  if(st.screen === 'plan' && !isCurated(st)) bindScroll(key);
+  if(key === 'sim') document.getElementById('simState').textContent = stateLabel(st);
+}
+
+function viewPlan(st, key){
+  var L = tabList(st);
+  var out = '<div class="ph-body" id="body-' + key + '">';
+  out += '<div class="h1">가입하실 <em>요금제를 선택</em>해 주세요.</div>';
+
+  out += '<div class="tabbar">';
+  out += tabBtn(key, 'weekly', '주간', st.tab==='weekly', true);
+  out += tabBtn(key, 'all', '전체', st.tab==='all');
+  out += tabBtn(key, 'lte', 'LTE', st.tab==='lte');
+  out += tabBtn(key, 'g5', '5G', st.tab==='g5');
+  out += '</div>';
+
+  // 컨트롤 순서 — 필터 > 정렬 > 비교 (전 탭 공통)
+  var fn = (st.fPrice?1:0) + (st.fData?1:0);          // 적용된 조건 수
+  out += '<div class="ctrls">';
+  out += '<span class="cnt">요금제 <b>' + L.length + '</b>개</span>';
+  out += '<button id="fbtn-' + key + '" class="chip' + (fn?' act':'') + (st.filterOpen?' open':'') + '"'
+       + ' aria-expanded="' + (st.filterOpen?'true':'false') + '" aria-controls="fbox-' + key + '"'
+       + ' onclick="toggleFilter(\'' + key + '\')">필터' + (fn ? ' · ' + fn : '')
+       + '<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button>';
+  out += '<select class="chip" onchange="setSort(\'' + key + '\',this.value)">'
+       + opt('reco', isCurated(st) ? '주간 순위순' : '추천순', st.sort)
+       + opt('price','낮은 가격순',st.sort) + opt('data','데이터 많은순',st.sort)
+       + '</select>';
+  out += '<button class="chip' + (st.compare.length?' act':'') + '" onclick="openCmp(\'' + key + '\')">'
+       + '비교 ' + st.compare.length + '/2</button>';
+  out += '</div>';
+
+  var hasF = !!(st.fPrice || st.fData);
+  {
+    out += '<div id="fbox-' + key + '" class="filterbox' + (st.filterOpen?' open':'') + '">'
+         + '<div class="fb-head"><b>필터 조건</b></div>'
+         + '<div class="fb-fields">'
+         + '<label><span>데이터 제공량</span><select onchange="setF(\'' + key + '\',\'fData\',this.value)">'
+         + opt('','전체',st.fData) + opt('a','50GB 이상',st.fData) + opt('b','10~50GB',st.fData) + opt('c','10GB 미만',st.fData)
+         + '</select></label>'
+         + '<label><span>월 기본료</span><select onchange="setF(\'' + key + '\',\'fPrice\',this.value)">'
+         + opt('','전체',st.fPrice) + opt('a','2만원 미만',st.fPrice) + opt('b','2~3.5만원',st.fPrice) + opt('c','3.5만원 이상',st.fPrice)
+         + '</select></label>'
+         + '</div>'
+         + '<div class="fb-act">'
+         + '<button class="fb-reset"' + (hasF?'':' disabled') + ' onclick="resetF(\'' + key + '\')">초기화</button>'
+         + '<button class="fb-done" onclick="toggleFilter(\'' + key + '\')">결과 ' + L.length + '개 보기</button>'
+         + '</div>'
+         + '</div>';
+  }
+
+  if(L.length === 0){
+    out += '<div class="empty"><div class="eicon">&#9888;</div><p>조건에 맞는 요금제가 없습니다.</p>'
+         + '<button onclick="resetF(\'' + key + '\')">필터 초기화</button></div>';
+  }else{
+    var lim = isCurated(st) ? L.length : Math.min(st.rendered, L.length);
+    out += '<div class="list">';
+    // 주간 탭은 요금제 고유의 주간 순위를 표기 (필터·정렬 후에도 순위 값 유지)
+    for(var i=0;i<lim;i++) out += cardHtml(st, key, L[i], isCurated(st) ? L[i].rank : null, i);
+    out += '</div>';
+    if(lim < L.length){
+      out += '<div class="loading" id="sent-' + key + '">스크롤하면 이어서 표시됩니다 (' + lim + '/' + L.length + ') <span class="dots"><span></span><span></span><span></span></span></div>';
+    }
+  }
+  out += '</div>';
+
+  var sel = st.selected ? find(st.selected) : null;
+  out += '<div class="ph-sticky">';
+  if(sel){
+    out += '<div class="sum"><span class="nm">' + esc(sel.name) + '</span><span class="pr">월 ' + won(price(sel)) + '</span></div>';
+    out += '<button class="cta" onclick="confirmPlan(\'' + key + '\')">개통 시작하기 <span>&#8594;</span></button>';
+  }else{
+    out += '<div class="sum idle">요금제를 선택해 주세요.</div>';
+    out += '<button class="cta off" onclick="cta0(\'' + key + '\')">개통 시작하기 <span>&#8594;</span></button>';
+  }
+  out += '</div>';
+  return out;
+}
+
+function tabBtn(key, id, label, on, best){
+  return '<button class="' + (on?'on':'') + '" onclick="setTab(\'' + key + '\',\'' + id + '\')">' + label
+       + (best ? '<span class="bst">BEST</span>' : '') + '</button>';
+}
+function opt(v,l,cur){ return '<option value="' + v + '"' + (cur===v?' selected':'') + '>' + l + '</option>'; }
+
+function cardHtml(st, key, p, rank, idx){
+  var sel = st.selected === p.code;
+  var cmpOn = st.compare.indexOf(p.code) >= 0;
+  var cls = 'card' + (sel?' sel':'');
+  var delay = Math.min(idx||0, 8) * 0.03;
+  var h = '<button class="' + cls + '" style="animation-delay:' + delay + 's" onclick="pick(\'' + key + '\',\'' + p.code + '\')">';
+  h += '<div class="card-top">';
+  if(rank) h += '<span class="rank">' + rank + '</span>';
+  h += '<span class="badges">';
+  var bs = p.badges.slice(0,2);   // C-15 / C-37
+  for(var i=0;i<bs.length;i++){
+    h += '<span class="bdg ' + (BADGE_CLASS[bs[i]]||'') + '">' + esc(bs[i]) + '</span>';
+  }
+  h += '</span>';
+  h += '<span class="radio"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg><span class="hit"></span></span>';
+  h += '</div>';
+  h += '<div class="pname">' + esc(p.name) + '</div>';
+  h += '<div class="prices">';
+  if(p.promo != null) h += '<span class="p-old">' + won(p.sale) + '</span><span class="p-new">' + won(p.promo) + '</span><span class="per">/월</span>';
+  else                h += '<span class="p-only">' + won(p.sale) + '</span><span class="per">/월</span>';
+  h += '</div>';
+  // 스펙 인포 블록 — 속도 안내를 스펙 하단에 포함 (혜택보다 위, 라벨 없이 본문만)
+  h += '<div class="info">';
+  h += infoChips(p);
+  h += '<div class="sp">' + esc(p.speed) + '</div>';
+  h += '</div>';
+  if(p.benefit) h += '<div class="benefit"><span class="gi">&#127873;</span>' + esc(p.benefit) + '</div>';
+  // 카드 내 비교 선택
+  h += '<div class="cmprow"><span class="cmpbox' + (cmpOn?' on':'') + '" onclick="cmpTap(event,\'' + key + '\',\'' + p.code + '\')">'
+     + '<span class="cb' + (cmpOn?' on':'') + '">&#10003;</span>비교' + (cmpOn?' 담김':' 담기') + '</span></div>';
+  h += '</button>';
+  return h;
+}
+
+function viewS01(st, key){
+  var p = st.preSelected ? find(st.preSelected) : null;
+  var out = '<div class="ph-body">';
+  out += '<div class="h1">가입을 위한 <em>개통 방법을 선택</em>해 주세요.</div>';
+  if(p){
+    out += '<div class="sect-t">선택하신 요금제</div>';
+    out += '<div class="ro"><div class="pname">' + esc(p.name) + '</div>';
+    out += '<div class="prices">';
+    if(p.promo != null) out += '<span class="p-old">' + won(p.sale) + '</span><span class="p-new">' + won(p.promo) + '</span><span class="per">/월</span>';
+    else out += '<span class="p-only">' + won(p.sale) + '</span><span class="per">/월</span>';
+    out += '</div>';
+    out += '<div class="info">' + infoChips(p) + '<div class="sp">' + esc(p.speed) + '</div></div>';
+    out += '<div class="lock">&#128274; read-only · 변경 수단 미제공 (C-31)</div></div>';
+  }
+  out += '<div class="sect-t">개통 방법을 선택해주세요.</div>';
+  out += optHtml(key, 'self', '셀프 개통', '10~15분 완료 · 유심 보유 또는 eSIM 지원 단말', st.openMethod==='self');
+  out += optHtml(key, 'agent', '상담사 개통', '전문가가 도와드려요 · 누구나 가능', st.openMethod==='agent');
+  out += '</div>';
+  out += '<div class="ph-sticky">';
+  out += '<button class="cta' + (st.openMethod?'':' off') + '" onclick="fromS01(\'' + key + '\')">개통 시작하기 <span>&#8594;</span></button>';
+  out += '</div>';
+  return out;
+}
+function optHtml(key, id, t, d, on){
+  return '<button class="opt' + (on?' sel':'') + '" onclick="setOpen(\'' + key + '\',\'' + id + '\')">'
+    + '<span class="radio"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>'
+    + '<span><b>' + t + '</b><small>' + d + '</small></span></button>';
+}
+
+function viewS03(st, key){
+  var p = find(st.selected || st.preSelected);
+  var out = '<div class="ph-body"><div class="done">';
+  out += '<div class="ck">&#10003;</div>';
+  out += '<h4>S-03 상품 정보 입력으로 이동</h4>';
+  out += '<p>요금제가 확정 상태로 승계되었습니다.</p>';
+  out += '<dl class="carry"><dt>승계된 값</dt>';
+  out += '<div><span>진입 케이스</span><span>' + (st.caseType==='A' ? 'A · 요금제 선택 후 진입' : 'B · 개통 방법 선택 후 진입') + '</span></div>';
+  out += '<div><span>개통 방법</span><span>' + (OPEN_LABEL[st.openMethod]||'-') + '</span></div>';
+  if(p){
+    out += '<div><span>요금제</span><span>' + esc(p.name) + '</span></div>';
+    out += '<div><span>월 요금</span><span>' + won(price(p)) + '</span></div>';
+    out += '<div><span>요금제 코드</span><span>' + p.code + '</span></div>';
+  }
+  out += '<div><span>요금제 화면(S-02)</span><span>' + (st.caseType==='A' ? '미노출 (C-25)' : '노출') + '</span></div>';
+  out += '</dl>';
+  out += '</div></div>';
+  out += '<div class="ph-sticky"><button class="cta" onclick="restart(\'' + key + '\')">처음부터 다시</button></div>';
+  return out;
+}
+
+function sheetHtml(st, key){
+  var a = find(st.compare[0]), b = find(st.compare[1]);
+  if(!a || !b) return '';                       // 방어: 비교 대상 2건 미충족
+  function row(label, fa, fb, cls){
+    return '<tr><td>' + label + '</td><td class="' + (cls||'') + '">' + fa + '</td><td class="' + (cls||'') + '">' + fb + '</td></tr>';
+  }
+  var h = '<div class="sheet on"><div class="grab"><i></i></div><div class="sheet-h"><b>요금제 비교</b><button onclick="closeSheet(\'' + key + '\')">&#215;</button></div>';
+  function selCell(p){
+    var on = st.selected === p.code;
+    return '<button class="selbtn' + (on?' on':'') + '" onclick="pickFromSheet(\'' + key + '\',\'' + p.code + '\')">'
+         + (on ? '선택됨' : '요금제 선택') + '</button>';
+  }
+  h += '<div class="sheet-b"><table class="ctable">';
+  h += '<thead><tr><th></th><th>' + esc(a.name) + '</th><th>' + esc(b.name) + '</th></tr></thead><tbody>';
+  h += row('월 요금', won(price(a)), won(price(b)), 'big');
+  h += row('판매가', a.promo!=null?'<span class="sm">'+won(a.sale)+'</span>':'-', b.promo!=null?'<span class="sm">'+won(b.sale)+'</span>':'-');
+  h += row('데이터', esc(a.data), esc(b.data));
+  h += row('QOS', esc(a.speed), esc(b.speed));
+  h += row('통화/문자', esc(a.voice)+' / '+esc(a.sms), esc(b.voice)+' / '+esc(b.sms));
+  h += '</tbody>';
+  h += '<tfoot><tr><td></td><td>' + selCell(a) + '</td><td>' + selCell(b) + '</td></tr></tfoot>';
+  h += '</table></div>';
+  h += '<div class="sheet-foot"><button onclick="clearCmp(\'' + key + '\')">'
+     + '<svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="3 6 5 6 21 6"/>'
+     + '<path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/>'
+     + '<path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>'
+     + '비교 목록 비우기</button></div>'
+     + '</div>';
+  return h;
+}
+
+function stateLabel(st){
+  var m = [];
+  m.push('케이스 ' + st.caseType);
+  m.push(st.screen === 'plan' ? 'S-02 요금제 선택' : (st.screen === 's01' ? 'S-01 개통 방법' : 'S-03 상품 정보'));
+  m.push(st.selected ? '선택: ' + st.selected : '미선택');
+  return m.join(' · ');
+}
+
+/* =========================================================
+   인터랙션
+   ========================================================= */
+function setView(v){
+  activeView = v;
+  document.getElementById('v-proto').className = 'view' + (v==='proto'?' on':'');
+  document.getElementById('v-sim').className = 'view' + (v==='sim'?' on':'');
+  document.getElementById('nav-proto').className = (v==='proto'?'on':'');
+  document.getElementById('nav-sim').className = (v==='sim'?'on':'');
+}
+
+/* 리로드 — 상태 초기화 */
+function reload(key){
+  var x = find('P14'); if(x) x.use = true;   // 검증용 플래그 복원
+  S[key] = newState(key);
+  if(key === 'sim'){
+    var i;
+    for(i=0;i<SCN.length;i++){
+      var b = document.getElementById('scn-'+SCN[i].id);
+      if(b) b.className = '';
+    }
+    paintLog();
+  }
+  render(key);
+}
+function reloadActive(){ reload(activeView); }
+
+function setTab(key, t){
+  var st = S[key];
+  st.tab = t; st.rendered = 8; st.filterOpen = false;
+  render(key);   // 탭 전환 시 선택 유지 (아키텍처 5.2 권고안)
+  var b = document.getElementById('body-'+key); if(b) b.scrollTop = 0;
+}
+/* 필터 펼침/닫힘 — 재렌더 없이 클래스만 토글
+   ① 스크롤 위치 보존 (P1) ② max-height 트랜지션이 열림·닫힘 모두 재생 */
+function toggleFilter(key){
+  var st = S[key];
+  st.filterOpen = !st.filterOpen;
+  var box = document.getElementById('fbox-' + key);
+  var btn = document.getElementById('fbtn-' + key);
+  if(!box || !btn){ render(key); return; }
+  box.className = 'filterbox' + (st.filterOpen ? ' open' : '');
+  var fn = (st.fPrice?1:0) + (st.fData?1:0);
+  btn.className = 'chip' + (fn ? ' act' : '') + (st.filterOpen ? ' open' : '');
+  btn.setAttribute('aria-expanded', st.filterOpen ? 'true' : 'false');
+}
+function setF(key, f, v){ var st=S[key]; st[f]=v; st.rendered=8; render(key); }
+function resetF(key){ var st=S[key]; st.fPrice=''; st.fData=''; st.forceEmpty=false; st.rendered=8; render(key); }
+function setSort(key, v){ var st=S[key]; st.sort=v; st.rendered=8; render(key); }
+
+function keepScroll(key, fn){
+  var b = document.getElementById('body-'+key);
+  var y = b ? b.scrollTop : 0;               // C-18 스크롤 유지
+  fn();
+  render(key);
+  var nb = document.getElementById('body-'+key);
+  if(nb) nb.scrollTop = y;
+}
+
+function pick(key, code){
+  keepScroll(key, function(){ S[key].selected = code; });
+}
+
+/* 카드 내 비교 담기 — 카드 선택과 분리 */
+function cmpTap(ev, key, code){
+  if(ev){ ev.stopPropagation(); ev.preventDefault(); }
+  var st = S[key];
+  var i = st.compare.indexOf(code);
+  if(i >= 0){
+    st.compare.splice(i, 1);
+    if(st.compare.length < 2) st.sheet = false;   // 2건 미만이면 비교 시트 닫음
+    keepScroll(key, function(){});
+    return;
+  }
+  if(st.compare.length >= 2){
+    flash(key, '비교는 최대 2개까지 담을 수 있습니다');
+    return;
+  }
+  st.compare.push(code);
+  if(st.compare.length === 2){
+    st.sheet = true;
+    render(key);
+  }else{
+    keepScroll(key, function(){});
+  }
+}
+
+/* 상단 비교 버튼 — 담긴 개수에 따라 안내 또는 시트 오픈 */
+function openCmp(key){
+  var st = S[key];
+  if(st.compare.length === 2){ st.sheet = true; render(key); return; }
+  if(st.compare.length === 0){ flash(key, '카드에서 비교할 요금제를 담아 주세요 (최대 2개)'); return; }
+  flash(key, '1개 더 담으면 비교할 수 있습니다');
+}
+function closeSheet(key){ var st=S[key]; st.sheet=false; render(key); }
+function clearCmp(key){ var st=S[key]; st.sheet=false; st.compare=[]; render(key); }
+function pickFromSheet(key, code){
+  var st=S[key]; st.sheet=false; st.compare=[]; st.selected=code; render(key);
+}
+function cta0(key){ flash(key, '요금제를 먼저 선택해 주세요'); logStep(key, 'STEP 12', 'f', 'selectedPlan = null → 비활성 CTA 안내 토스트'); }
+function flash(key, msg){
+  var st = S[key];
+  st.toast = msg; render(key);
+  setTimeout(function(){ st.toast = null; render(key); }, 1900);
+}
+function setOpen(key, v){ S[key].openMethod = v; render(key); }
+function fromS01(key){
+  var st = S[key];
+  if(!st.openMethod) return;
+  if(st.caseType === 'A' && st.preSelected){
+    st.selected = st.preSelected;
+    st.screen = 's03';
+    logStep(key, 'STEP 14', 'p', '요금제 확정 승계 → S-03 (S-02 미노출, C-25)');
+  }else{
+    st.screen = 'plan'; st.rendered = 8;
+    logStep(key, 'STEP 3', 'p', 'openMethodCd = ' + st.openMethod + ' → S-02 진입');
+  }
+  render(key);
+}
+
+function confirmPlan(key){
+  var st = S[key];
+  var p = find(st.selected);
+  logStep(key, 'STEP 12', 'p', 'selectedPlan = ' + p.code);
+  logStep(key, 'STEP 13', 'p', '사용여부 = 사용');
+  logStep(key, 'STEP 14', 'p', '신청서 세션 승계 → S-03 이동');
+  st.screen = 's03';
+  render(key);
+}
+function okAlert(key){
+  var st = S[key];
+  var go = st.alert ? st.alert.go : null;
+  st.alert = null;
+  if(go) logStep(key, '결과', 'i', go);
+  if(go && go.indexOf('S-01') === 0){ st.screen = 's01'; }
+  render(key);
+}
+function restart(key){
+  var keep = S[key].scenario;
+  reload(key);
+  S[key].scenario = keep;
+}
+
+/* 점진 렌더 (C-39) */
+function bindScroll(key){
+  var b = document.getElementById('body-'+key);
+  var s = document.getElementById('sent-'+key);
+  if(!b || !s) return;
+  b.onscroll = function(){
+    var st = S[key];
+    if(b.scrollTop + b.clientHeight >= s.offsetTop - 40){
+      var total = tabList(st).length;
+      if(st.rendered < total){
+        var y = b.scrollTop;
+        st.rendered = Math.min(st.rendered + 6, total);
+        render(key);
+        var nb = document.getElementById('body-'+key);
+        if(nb) nb.scrollTop = y;
+      }
+    }
+  };
+}
+
+/* =========================================================
+   시나리오 시뮬레이터
+   ========================================================= */
+var SCN = [
+  {id:'N1', kind:'n', t:'정상 · 케이스 B (미선택 진입)', d:'개통 방법 확정 → 요금제 화면 노출 → 선택 → 확정 → S-03'},
+  {id:'N2', kind:'n', t:'정상 · 케이스 A (기선택 진입)', d:'기선택 유효 → S-01에 요금제 정보 노출, S-02 스킵 (C-25)'},
+  {id:'E2', kind:'e', t:'EX-02 조회·필터 결과 0건', d:'목록 영역만 빈 상태, 탭·컨트롤 유지 (Alert 없음)'}
+];
+
+function initScn(){
+  var h = '';
+  for(var i=0;i<SCN.length;i++){
+    var s = SCN[i];
+    h += '<button id="scn-' + s.id + '" onclick="runScn(\'' + s.id + '\')">'
+      + '<span class="tag ' + s.kind + '">' + (s.kind==='n'?'정상':'예외') + '</span>'
+      + '<span>' + s.t + '<small>' + s.d + '</small></span></button>';
+  }
+  document.getElementById('scnList').innerHTML = h;
+}
+
+function logStep(key, step, res, msg){
+  if(key !== 'sim') return;
+  S.sim.log.push({step:step, res:res, msg:msg});
+  paintLog();
+}
+function logHead(t){ S.sim.log.push({head:t}); paintLog(); }
+function paintLog(){
+  var L = S.sim.log, h = '';
+  if(!L.length){ h = '<div class="empty2">시나리오를 선택하세요.</div>'; }
+  for(var i=0;i<L.length;i++){
+    var x = L[i];
+    if(x.head){ h += '<div class="hd">// ' + esc(x.head) + '</div>'; continue; }
+    var rl = x.res==='p'?'PASS':(x.res==='f'?'FAIL':(x.res==='s'?'SKIP':'INFO'));
+    h += '<div class="ln"><span class="st">' + esc(x.step) + '</span>'
+      + '<span class="rs ' + x.res + '">' + rl + '</span>'
+      + '<span class="msg">' + esc(x.msg) + '</span></div>';
+  }
+  var box = document.getElementById('logBox');
+  box.innerHTML = h;
+  box.scrollTop = box.scrollHeight;
+}
+
+function runScn(id){
+  for(var i=0;i<SCN.length;i++) document.getElementById('scn-'+SCN[i].id).className = '';
+  document.getElementById('scn-'+id).className = 'on';
+
+  var x = find('P14'); if(x) x.use = true;
+  S.sim = newState('sim');
+  S.sim.scenario = id;
+  var st = S.sim;
+
+  if(id === 'N1'){
+    logHead('정상 · 케이스 B');
+    logStep('sim','STEP 1','p','preSelectedPlan = null → 케이스 B');
+    logStep('sim','STEP 2','s','케이스 A 분기 미해당');
+    logStep('sim','STEP 3','p','openMethodCd = agent');
+    st.caseType='B'; st.openMethod='agent'; st.tab='lte';
+    var n = tabList(st).length;
+    logStep('sim','STEP 4','p','목록 조회 ' + n + '건 (사용여부=사용 + 개통방법 필터)');
+    logStep('sim','STEP 5','p','탭 데이터 구성 — 주간/전체/LTE/5G');
+    logStep('sim','STEP 6','p','가격·배지 렌더 (C-30 / C-37 상위 2개)');
+    logStep('sim','STEP 7','p','selectedPlan = null · Sticky 비활성');
+    logStep('sim','INFO','i','카드를 선택하고 개통 시작하기를 눌러 STEP 8~14를 확인하세요');
+  }
+  else if(id === 'N2'){
+    logHead('정상 · 케이스 A');
+    logStep('sim','STEP 1','p','preSelectedPlan = P01 (파라미터+세션 판정)');
+    logStep('sim','STEP 2','p','valid = true AND 사용여부 = 사용 → 케이스 A');
+    logStep('sim','STEP 3~7','s','요금제 화면(S-02) 미노출 — C-25');
+    st.caseType='A'; st.preSelected='P01'; st.screen='s01'; st.openMethod=null;
+    logStep('sim','INFO','i','S-01에 요금제 정보 read-only 노출 · 개통 방법 선택 후 진행');
+  }
+  else if(id === 'E2'){
+    logHead('EX-02 결과 0건');
+    logStep('sim','STEP 3','p','openMethodCd = agent');
+    logStep('sim','STEP 4','p','목록 조회 정상');
+    logStep('sim','STEP 11','f','필터 적용 결과 0건 → EX-02');
+    logStep('sim','INFO','i','Alert 없음 · 탭·컨트롤 유지 · 인라인 빈 상태 + 필터 초기화');
+    st.tab='lte'; st.forceEmpty=true; st.filterOpen=false; st.fPrice='a'; st.fData='a';
+  }
+  render('sim');
+}
+
+/* =========================================================
+   부트
+   ========================================================= */
+initScn();
+render('proto');
+render('sim');
+
+
+/* ===== 리포트 탭 ===== */
+var R_TABS = ['proto','plan','func','req'];
+function showTab(id){
+  for(var i=0;i<R_TABS.length;i++){
+    var k = R_TABS[i];
+    document.getElementById('rt-'+k).className = 'r-view' + (k===id ? ' on' : '');
+    document.getElementById('rb-'+k).className = (k===id ? 'on' : '');
+  }
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+</script>
+</body>
+</html>
