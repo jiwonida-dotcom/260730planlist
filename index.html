@@ -82,7 +82,7 @@ select{font-family:inherit;cursor:pointer}
 .h1 em{font-style:normal;color:var(--main)}
 
 .tabbar{position:sticky;top:-18px;z-index:5;background:rgba(255,255,255,.96);backdrop-filter:blur(6px);padding:8px 0 12px;margin:-8px 0 0;display:flex;gap:6px;flex-wrap:wrap}
-.tabbar button{padding:8px 15px;border-radius:99px;background:var(--bg);font-size:12.5px;font-weight:700;color:var(--muted);display:inline-flex;align-items:center;gap:5px;min-height:36px;transition:all .16s;border:1px solid transparent}
+.tabbar button{padding:8px 15px;border-radius:99px;background:var(--bg);font-size:12.5px;font-weight:700;color:var(--muted);display:inline-flex;align-items:center;gap:5px;min-height:44px;transition:all .16s;border:1px solid transparent}
 .tabbar button:hover:not(.on){border-color:var(--line-2);color:var(--text)}
 .tabbar button.on{background:linear-gradient(135deg,var(--main) 0%,var(--main-deep) 100%);color:#fff;box-shadow:0 4px 12px rgba(91,75,225,.28)}
 .tabbar .bst{font-size:9px;background:rgba(255,255,255,.26);padding:1.5px 6px;border-radius:5px;letter-spacing:.03em;font-weight:800}
@@ -91,7 +91,7 @@ select{font-family:inherit;cursor:pointer}
 .ctrls{display:flex;align-items:center;gap:6px;margin:12px 0 4px;flex-wrap:wrap}
 .ctrls .cnt{font-size:12.5px;font-weight:700;margin-right:auto;color:var(--muted)}
 .ctrls .cnt b{color:var(--main);font-size:14px}
-.chip{padding:7px 12px;border:1px solid var(--line-2);border-radius:10px;font-size:11.5px;font-weight:700;color:var(--muted);background:var(--surface);min-height:34px;display:inline-flex;align-items:center;gap:4px;transition:all .15s}
+.chip{padding:7px 12px;border:1px solid var(--line-2);border-radius:10px;font-size:11.5px;font-weight:700;color:var(--muted);background:var(--surface);min-height:44px;display:inline-flex;align-items:center;gap:4px;transition:all .15s}
 .chip:hover{border-color:var(--main-mid);color:var(--main)}
 .chip.act{border-color:var(--main);color:var(--main);background:var(--main-weak);box-shadow:var(--ring)}
 .chip .chev{width:12px;height:12px;stroke:currentColor;stroke-width:2.3;fill:none;stroke-linecap:round;stroke-linejoin:round;transition:transform .22s ease}
@@ -105,23 +105,26 @@ select{font-family:inherit;cursor:pointer}
 .fb-fields{display:flex;flex-direction:column;gap:9px}
 .filterbox label{display:flex;align-items:center;gap:10px;font-size:12px;font-weight:700;color:var(--muted)}
 .filterbox label>span{flex:0 0 82px}
-.filterbox select{flex:1;min-width:0;padding:0 11px;border:1px solid var(--line-2);border-radius:10px;font-size:12.5px;font-weight:700;background:#fff;color:var(--text);min-height:40px}
+.filterbox select{flex:1;min-width:0;padding:0 11px;border:1px solid var(--line-2);border-radius:10px;font-size:12.5px;font-weight:700;background:#fff;color:var(--text);min-height:44px}
 .filterbox select:focus{outline:none;border-color:var(--main);box-shadow:var(--ring)}
 .fb-act{display:flex;gap:8px;margin-top:13px;padding-top:12px;border-top:1px solid var(--main-weak)}
-.fb-reset{flex:0 0 auto;padding:0 15px;min-height:40px;border:1px solid var(--line-2);background:var(--surface);border-radius:10px;font-size:12px;font-weight:700;color:var(--muted);transition:all .15s}
+.fb-reset{flex:0 0 auto;padding:0 15px;min-height:44px;border:1px solid var(--line-2);background:var(--surface);border-radius:10px;font-size:12px;font-weight:700;color:var(--muted);transition:all .15s}
 .fb-reset:hover{color:var(--main);border-color:var(--main-mid)}
 .fb-reset:disabled{opacity:.45;cursor:default}
-.fb-done{flex:1;min-height:40px;border-radius:10px;background:var(--main);color:#fff;font-size:12.5px;font-weight:800;transition:filter .15s}
+.fb-done{flex:1;min-height:44px;border-radius:10px;background:var(--main);color:#fff;font-size:12.5px;font-weight:800;transition:filter .15s}
 .fb-done:hover{filter:brightness(1.06)}
 
 
 /* ===== 카드 ===== */
 .list{display:flex;flex-direction:column;gap:11px;margin-top:12px}
-.card{border:1px solid var(--line);border-radius:var(--r);padding:16px;background:var(--surface);display:block;width:100%;text-align:left;position:relative;transition:border-color .15s, box-shadow .15s, transform .1s;animation:cardIn .28s ease both}
+/* 카드 = 컨테이너(div). 선택 버튼(.card-main)과 비교 담기 버튼을 형제로 분리
+   → button 내부 조작 요소 중첩 제거 + 비교 담기가 키보드로 도달 가능 */
+.card{border:1px solid var(--line);border-radius:var(--r);padding:16px;background:var(--surface);position:relative;transition:border-color .15s, box-shadow .15s, transform .1s;animation:cardIn .28s ease both}
 @keyframes cardIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .card:hover{border-color:var(--main-mid);box-shadow:var(--shadow-m)}
 .card:active{transform:scale(.994)}
 .card.sel{border:2px solid var(--main);padding:15px;box-shadow:0 6px 20px rgba(91,75,225,.15)}
+.card-main{display:block;width:100%;text-align:left;padding:0}
 .card-top{display:flex;align-items:flex-start;gap:9px;margin-bottom:10px}
 .rank{flex-shrink:0;min-width:24px;height:24px;padding:0 5px;border-radius:8px;background:linear-gradient(135deg,var(--main),var(--main-deep));color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-top:1px;box-shadow:0 2px 6px rgba(91,75,225,.25)}
 .badges{display:flex;gap:5px;flex-wrap:wrap;flex:1;min-width:0}
@@ -134,7 +137,7 @@ select{font-family:inherit;cursor:pointer}
 .card.sel .radio svg{stroke:#fff}
 .hit{position:absolute;inset:-11px;border-radius:50%}
 /* ── 카드 내부 단일 그리드: 모든 블록이 카드 콘텐츠 좌·우 경계에 정렬 ── */
-.pname{font-size:17.5px;font-weight:800;letter-spacing:-.02em;line-height:1.32}
+.pname{display:block;font-size:17.5px;font-weight:800;letter-spacing:-.02em;line-height:1.32}
 .prices{display:flex;align-items:baseline;justify-content:flex-end;gap:9px;margin-top:8px}
 .p-old{font-size:13.5px;color:var(--muted-2);text-decoration:line-through;font-weight:600}
 .p-new{font-size:21px;font-weight:800;color:var(--main);letter-spacing:-.025em}
@@ -172,7 +175,7 @@ select{font-family:inherit;cursor:pointer}
 .empty{text-align:center;padding:58px 16px;animation:fadeIn .25s ease}
 .empty .eicon{width:52px;height:52px;border-radius:18px;background:var(--bg);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:22px;color:var(--muted-2)}
 .empty p{font-size:13.5px;color:var(--muted);margin-bottom:16px;font-weight:600}
-.empty button{padding:10px 20px;border:1px solid var(--main);color:var(--main);border-radius:11px;font-size:12.5px;font-weight:800;background:var(--main-weak);min-height:40px;transition:all .15s}
+.empty button{padding:10px 20px;border:1px solid var(--main);color:var(--main);border-radius:11px;font-size:12.5px;font-weight:800;background:var(--main-weak);min-height:44px;transition:all .15s}
 .empty button:hover{box-shadow:var(--ring)}
 
 /* sticky bar */
@@ -225,7 +228,7 @@ select{font-family:inherit;cursor:pointer}
 .grab i{width:38px;height:4.5px;border-radius:99px;background:var(--line-2)}
 .sheet-h{display:flex;align-items:center;padding:8px 18px 11px;border-bottom:1px solid var(--line)}
 .sheet-h b{font-size:14.5px;font-weight:800;flex:1;letter-spacing:-.01em}
-.sheet-h button{font-size:19px;color:var(--muted);width:32px;height:32px;border-radius:9px;transition:background .15s}
+.sheet-h button{font-size:19px;color:var(--muted);width:44px;height:44px;border-radius:9px;transition:background .15s}
 .sheet-h button:hover{background:var(--bg)}
 .sheet-b{overflow-y:auto;padding:13px 16px 16px}
 .ctable{width:100%;border-collapse:collapse;font-size:11.5px;table-layout:fixed}
@@ -272,6 +275,13 @@ select{font-family:inherit;cursor:pointer}
 .log .empty2{color:#5A5A70}
 .legend{font-size:11px;color:var(--muted);margin-top:11px;line-height:1.7}
 .legend code{background:var(--bg);padding:1.5px 6px;border-radius:5px;font-size:10.5px;font-weight:700}
+
+/* ===== 포커스 표시 — UA 기본에 의존하지 않고 명시 (WCAG 2.4.7) ===== */
+.card-main:focus-visible,.cmpbox:focus-visible,.tabbar button:focus-visible,.chip:focus-visible,
+.cta:focus-visible,.selbtn:focus-visible,.fb-reset:focus-visible,.fb-done:focus-visible,
+.empty button:focus-visible,.sheet-h button:focus-visible,.sheet-foot button:focus-visible,
+.opt:focus-visible{outline:2.5px solid var(--main-deep);outline-offset:2px;border-radius:10px}
+.card-main:focus-visible{outline-offset:3px}
 
 /* ===== 리포트 크롬 (r- 접두어로 프로토타입과 분리) ===== */
 body{background:linear-gradient(180deg,#F3F3F8 0%,#EBEBF2 240px,#F3F3F8 100%)}
@@ -388,7 +398,7 @@ code.k{background:var(--bg);border:1px solid var(--line);border-radius:5px;paddi
       <dl class="r-m"><dt>개선 범위</dt><dd>화면 전면 개선 + 프로세스 재배치</dd></dl>
       <dl class="r-m"><dt>분석 기간</dt><dd>2026-06-29 ~ 07-29 <em>30일</em></dd></dl>
       <dl class="r-m"><dt>근거</dt><dd>Clarity · 시안 · 워크스루</dd></dl>
-      <dl class="r-m ok"><dt>확정 상태</dt><dd>확정 40 · 미확정 0</dd></dl>
+      <dl class="r-m ok"><dt>확정 상태</dt><dd>확정 43 · 미확정 2</dd></dl>
       <dl class="r-m"><dt>디바이스 기준</dt><dd>모바일 우선 <em>81%</em></dd></dl>
     </div>
   </div>
@@ -602,12 +612,12 @@ code.k{background:var(--bg);border:1px solid var(--line);border-radius:5px;paddi
       <tr><td class="id"><span class="cid">C-26</span></td><td>선택 상태</td><td><b>선택</b>: 카드 보더 메인 컬러 + 두께 굵게, 라디오 채움 / <b>미선택</b>: 배경 없는 옅은 그레이 테두리 + 체크 라인. 색상·두께·채움 삼중 단서</td></tr>
       <tr><td class="id"><span class="cid">C-20</span></td><td>Sticky</td><td>선택 요금제 정보 + 버튼 영역을 뷰포트 하단 고정</td></tr>
       <tr><td class="id"><span class="cid">C-35</span></td><td>비교하기</td><td>전 탭 노출. 카드 내 담기 + 상단 <code class="k">비교 N/2</code> 상태. 담은 항목은 <b>탭 이동 시에도 유지</b>, 2건이면 하단 시트로 비교 후 시트에서 바로 선택</td></tr>
-      <tr><td class="id"><span class="cid">C-38</span></td><td>접근성 범위</td><td>터치 타깃 44×44px은 요금제 화면 한정 적용. 퍼널 전체 표준화는 후속</td></tr>
+      <tr><td class="id"><span class="cid">C-38</span></td><td>터치 타깃</td><td>44×44px은 요금제 화면 한정 적용이며, <b>화면 내 모든 상시 노출 컨트롤에 예외 없이 적용</b> — 탭·목록 컨트롤 칩·필터 셀렉트·패널 버튼·시트 닫기 포함. 퍼널 전체 표준화는 후속</td></tr>
     </tbody>
   </table>
 
   <div class="r-note" style="margin-top:14px">
-    <b>접근성 근거</b> — 선택/미선택을 색상만으로 구분하면 색약·저조도 환경에서 상태를 오인할 수 있습니다. C-26은 색상 외에 <b>라디오 채움 유무(형태)</b>와 <b>보더 두께</b>를 함께 바꿔 WCAG 1.4.1(색상만으로 정보 전달 금지)을 충족합니다.
+    <b>접근성 근거</b> — 선택/미선택을 색상만으로 구분하면 색약·저조도 환경에서 상태를 오인할 수 있습니다. C-26은 색상 외에 <b>라디오 채움 유무(형태)</b>와 <b>보더 두께</b>를 함께 바꿔 <b>색상 단독 의존을 회피</b>합니다(WCAG 1.4.1). 다만 이는 <b>시각 단서에 한정</b>되며, 보조기술에 선택 상태를 전달하는 것은 C-41이 담당합니다.
   </div>
 </div>
 
@@ -675,7 +685,7 @@ code.k{background:var(--bg);border:1px solid var(--line);border-radius:5px;paddi
       <tr><td class="id">4</td><td>목록 조회</td><td>사용 여부 = '사용'(C-40) <b>AND</b> 지원 개통 방법에 확정 개통 방법 포함 — 사전 필터</td><td>0건 → <span class="cid x">EX-02</span></td></tr>
       <tr><td class="id">5</td><td>탭 데이터 구성</td><td>주간: 배치 결과 <b>상위 10개 확정</b> 후 필터·정렬 적용, 카드에는 고유 순위 표기 / 전체·LTE·5G: STEP 4 결과를 네트워크로 분기</td><td>주간 조회 실패 → 직전 데이터 유지 (C-29)</td></tr>
       <tr><td class="id">6</td><td>카드 렌더</td><td>가격: 프로모션가 유무로 분기(C-30) / 배지: 2개 초과 시 등록 순서 상위 2개(C-37)</td><td>—</td></tr>
-      <tr><td class="id">7</td><td>초기 상태</td><td>선택 없음 — 재진입 시에도 미복원(C-32). Sticky는 안내 문구 + CTA 비활성</td><td>—</td></tr>
+      <tr><td class="id">7</td><td>초기 상태</td><td>선택 없음 — 첫 페이지 재진입 시 미복원(C-32). <b>단, 상품 정보 입력(S-03)에서 브라우저 뒤로가기로 복귀한 경우 직전 선택 복원</b>(C-43). Sticky는 안내 문구 + CTA 비활성</td><td>—</td></tr>
     </tbody>
   </table>
   <div class="r-note" style="margin-top:12px">케이스 A는 STEP 2 통과 시 S-02를 렌더하지 않고 S-01로 이동하며, S-01에 선택 요금제 정보를 노출합니다 (C-25 · C-31).</div>
@@ -685,7 +695,7 @@ code.k{background:var(--bg);border:1px solid var(--line);border-radius:5px;paddi
     <thead><tr><th>STEP</th><th>처리</th><th>검증 조건</th><th>실패 시</th></tr></thead>
     <tbody>
       <tr><td class="id">8</td><td>카드 선택</td><td>단일 선택 — 기존 선택 자동 해제</td><td>—</td></tr>
-      <tr><td class="id">9</td><td>선택 상태 렌더</td><td>선택: 보더 메인 컬러 + 두께 증가, 라디오 채움 / 미선택: 배경 없는 그레이 아웃라인(C-26). <b>스크롤 위치 유지</b></td><td>—</td></tr>
+      <tr><td class="id">9</td><td>선택 상태 렌더</td><td>선택: 보더 메인 컬러 + 두께 증가, 라디오 채움 / 미선택: 배경 없는 그레이 아웃라인(C-26). <b>이전·현재 카드와 Sticky만 부분 갱신</b>(목록 재생성 금지, C-42) → 스크롤 위치·키보드 포커스 유지</td><td>—</td></tr>
       <tr><td class="id">10</td><td>Sticky 갱신</td><td>"{요금제명} 월 {요금}원" + CTA 활성</td><td>—</td></tr>
       <tr><td class="id">11</td><td>필터·정렬</td><td><b>클라이언트 처리</b>, 리로드 없음. 적용 후 "요금제 N개" 즉시 갱신</td><td>0건 → <span class="cid x">EX-02</span></td></tr>
       <tr><td class="id">12</td><td>확정 클릭</td><td>선택 요금제 존재</td><td>CTA 비활성 유지 + 안내 토스트</td></tr>
@@ -710,9 +720,9 @@ code.k{background:var(--bg);border:1px solid var(--line);border-radius:5px;paddi
       <tr><td>—</td><td>가격</td><td>프로모션가 有: 판매가(취소선) + 프로모션가 / 無: 판매가 단독(C-30)</td><td>불가</td></tr>
       <tr><td>스펙 면</td><td>데이터·통화·문자 + 속도</td><td>플랫 단색 아이콘 + 값, 센터 정렬. 속도 안내는 스펙 하단(C-16)</td><td>불가</td></tr>
       <tr><td>혜택 면</td><td>추가 혜택</td><td>별도 면. 해당 없으면 영역 미노출(C-17)</td><td>불가</td></tr>
-      <tr><td>우측 상단</td><td>라디오</td><td>선택/미선택 2상태(C-26)</td><td><b>선택</b></td></tr>
-      <tr><td>우측 하단</td><td>비교 담기</td><td>체크 + 라벨. 카드 선택과 이벤트 분리(C-35)</td><td><b>담기/해제</b></td></tr>
-      <tr><td>카드 전체</td><td>—</td><td>탭 영역(C-18)</td><td><b>선택</b></td></tr>
+      <tr><td>우측 상단</td><td>라디오</td><td>선택/미선택 2상태(C-26). <code class="k">role="radio"</code> + <code class="k">aria-checked</code>로 상태 전달(C-41)</td><td><b>선택</b></td></tr>
+      <tr><td>우측 하단</td><td>비교 담기</td><td>체크 + 라벨. 카드 선택 버튼과 <b>형제 요소로 분리</b>한 <code class="k">&lt;button&gt;</code> + <code class="k">aria-pressed</code> — 키보드 도달 가능(C-41)</td><td><b>담기/해제</b></td></tr>
+      <tr><td>카드 전체</td><td>—</td><td>탭 영역(C-18). 목록은 <code class="k">role="radiogroup"</code>, 방향키·Home·End 이동 + roving tabindex로 탭 스톱 1개 유지(C-41)</td><td><b>선택</b></td></tr>
     </tbody>
   </table>
 
@@ -810,8 +820,8 @@ code.k{background:var(--bg);border:1px solid var(--line);border-radius:5px;paddi
 </section>
   <section id="rt-req" class="r-view">
 <div class="r-grid r-g3" style="margin-bottom:30px">
-  <div class="r-kpi ok"><div class="v">40</div><div class="l">확정 사항 (C-01 ~ C-40)</div></div>
-  <div class="r-kpi ok"><div class="v">0</div><div class="l">미확정 사항 — 기획 확정 완결</div></div>
+  <div class="r-kpi ok"><div class="v">43</div><div class="l">확정 사항 (C-01 ~ C-43)</div></div>
+  <div class="r-kpi"><div class="v">2</div><div class="l">미확정 사항 — 기획 결정 대기 (O-17 · O-18)</div></div>
   <div class="r-kpi"><div class="v">5</div><div class="l">핵심 페인포인트 (P1 ~ P5) — 전건 해소</div></div>
   <div class="r-kpi"><div class="v">6</div><div class="l">개선 원칙 (G-01 ~ G-06)</div></div>
 </div>
@@ -853,6 +863,26 @@ code.k{background:var(--bg);border:1px solid var(--line);border-radius:5px;paddi
   <h2><span class="no">3</span>공통 기준 (Baseline)</h2>
   <p class="d">후속 산출물은 별도 이슈 목록을 두지 않고 이 절의 ID를 참조합니다. 변경 시 이 절을 먼저 갱신하고 본문에 반영합니다.</p>
 
+  <div class="r-sub"><span class="g">사</span>구현 규칙 · 접근성</div>
+  <p class="d" style="margin:0 0 10px">UI/UX 교차 검증에서 발견된 결함을 규칙으로 확정한 항목입니다. 기존 확정 사항이 <b>무엇을 보여줄지</b>였다면, 이 그룹은 <b>어떻게 갱신하고 어떻게 전달할지</b>를 정합니다.</p>
+  <table class="r-t">
+    <thead><tr><th>ID</th><th>항목</th><th>확정 내용</th></tr></thead>
+    <tbody>
+      <tr><td class="id"><span class="cid">C-41</span></td><td>보조기술 상태 전달</td><td>목록은 <code class="k">role="radiogroup"</code>, 카드 선택 영역은 <code class="k">role="radio"</code> + <code class="k">aria-checked</code>로 선택 여부를 전달. <b>비교 담기는 선택 버튼과 형제 요소로 분리</b>해 <code class="k">&lt;button&gt;</code> + <code class="k">aria-pressed</code>로 구현(중첩 인터랙션 금지). 방향키·Home·End 이동과 roving tabindex로 탭 스톱 1개 유지, <code class="k">:focus-visible</code> 링 명시. 토스트는 <code class="k">role="status"</code> <code class="k">aria-live="polite"</code>, 비활성 CTA는 <code class="k">aria-disabled</code></td></tr>
+      <tr><td class="id"><span class="cid">C-42</span></td><td>상태 갱신 방식</td><td><b>목록 전체 재생성(innerHTML 교체) 금지.</b> 선택·토스트·비교 시트는 해당 요소만 부분 갱신하고, 목록을 실제로 다시 그려야 하는 점진 렌더만 스크롤 복원 경로를 사용한다. 근거: 전체 재생성은 ① 스크롤 위치 소실 ② 키보드 포커스 소실 ③ 진입 애니메이션 전체 재생을 유발해 C-18(맥락 보존)과 정면 충돌</td></tr>
+      <tr><td class="id"><span class="cid">C-43</span></td><td>복귀 시 상태 정책</td><td>상품 정보 입력(S-03)에서 <b>브라우저 뒤로가기로 요금제 화면에 복귀한 경우 직전 선택을 복원</b>한다. C-32(첫 페이지 재진입 시 미복원)와 구분되는 별도 경로이며, Quick Back이 본 개선의 핵심 지표인 만큼 가장 빈번한 복귀 동선</td></tr>
+    </tbody>
+  </table>
+
+  <div class="r-sub">미확정 사항 — 기획 결정 대기</div>
+  <table class="r-t">
+    <thead><tr><th>ID</th><th>항목</th><th>Owner</th><th>배경 · 막히는 것</th></tr></thead>
+    <tbody>
+      <tr><td class="id"><span class="cid d">O-17</span></td><td>프로모션 적용 기간 표기</td><td>기획 / 법무</td><td>C-30은 판매가·프로모션가 구조만 정했고 <b>적용 기간과 종료 후 금액을 다루지 않는다.</b> 혜택 면에는 "(24개월)"이 표기되는데 가격에는 없어 표기 기준이 어긋난다. P5의 '가격 근거 불명'이 실질 미해소이며, 요금 재확인 욕구는 Quick Back의 유력한 동인. 표시·광고 규제 검토 필요</td></tr>
+      <tr><td class="id"><span class="cid d">O-18</span></td><td>카드 정보 밀도</td><td>기획 / 디자인</td><td>카드 높이 약 300px로 첫 화면에 1~2개만 보인다. 비교·판단이 목적인 화면인데 동시 비교가 어려워 비교 시트 의존도가 높아진다. 스펙 면·혜택 면 압축으로 240px대까지 줄이면 2개 노출이 가능하나 정보량 축소 범위는 결정 필요</td></tr>
+    </tbody>
+  </table>
+
   <div class="r-sub"><span class="g">바</span>상태 · 예외 정책</div>
   <table class="r-t">
     <thead><tr><th>ID</th><th>항목</th><th>확정 내용</th></tr></thead>
@@ -862,7 +892,7 @@ code.k{background:var(--bg);border:1px solid var(--line);border-radius:5px;paddi
       <tr><td class="id"><span class="cid">C-28</span></td><td>가입자 유형 제약</td><td>제한 요금제는 사전 필터링 없이 가입자 유형 선택 단계에서 예외처리 — <b>현행 반영되어 있어 현행 유지</b></td></tr>
     </tbody>
   </table>
-  <p class="d" style="margin:10px 0 0">가·나·다·라·마 그룹은 <b>개선안</b> 탭에서 리포트 형식으로 전개했습니다.</p>
+  <p class="d" style="margin:10px 0 0">가·나·다·라·마 그룹은 <b>개선안</b> 탭에서 리포트 형식으로 전개했습니다. 사 그룹(구현 규칙·접근성)은 위 표를 참조하세요.</p>
 
   <div class="r-sub">표준 문구 · 명칭</div>
   <p class="d" style="margin:0 0 10px">확정된 카피의 원본 목록입니다. 각 문구가 <b>어디에 어떤 상태로 노출되는지</b>는 기능정의 탭 3장 「노출 데이터」에서 다룹니다.</p>
@@ -944,7 +974,8 @@ function newState(mode){
     compare: [],
     filterOpen: false, fPrice: '', fData: '', sort: 'reco',
     weeklyStale: false, forceEmpty: false,
-    rendered: 8, alert: null, toast: null, sheet: false,
+    rendered: 8, alert: null, toast: null, toastT: null, sheet: false,
+    focusCode: null,              // roving tabindex — 목록의 단일 탭 스톱
     log: [], scenario: null
   };
 }
@@ -1012,12 +1043,13 @@ var ICON = {
   call: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 16.9v2.6a1.5 1.5 0 0 1-1.6 1.5 18.5 18.5 0 0 1-8-2.9 18.2 18.2 0 0 1-5.6-5.6A18.5 18.5 0 0 1 2.9 4.5 1.5 1.5 0 0 1 4.4 3H7a1.5 1.5 0 0 1 1.5 1.3c.1.9.3 1.7.6 2.5a1.5 1.5 0 0 1-.4 1.6L7.6 9.5a15 15 0 0 0 5.6 5.6l1.1-1.1a1.5 1.5 0 0 1 1.6-.4c.8.3 1.6.5 2.5.6A1.5 1.5 0 0 1 21 16.9z"/></svg>',
   sms:  '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="4.5" width="19" height="15" rx="2"/><polyline points="21 6 12 12.5 3 6"/></svg>'
 };
+/* button 내부는 phrasing content만 허용 → 카드 내부 블록은 span + CSS display */
 function infoChips(p){
-  return '<div class="chips">'
+  return '<span class="chips">'
     + '<span aria-label="데이터 ' + esc(p.data) + '">' + ICON.data + esc(p.data) + '</span>'
     + '<span aria-label="통화 ' + esc(p.voice) + '">' + ICON.call + esc(p.voice) + '</span>'
     + '<span aria-label="문자 ' + esc(p.sms) + '">' + ICON.sms + esc(p.sms) + '</span>'
-    + '</div>';
+    + '</span>';
 }
 
 function render(key){
@@ -1028,19 +1060,80 @@ function render(key){
   else if(st.screen === 's01')  body = viewS01(st, key);
   else                          body = viewS03(st, key);
 
+  /* 비교 시트·토스트는 전용 컨테이너로 분리 — 목록을 재렌더하지 않고 갱신 (C-18 보존) */
   el.innerHTML =
     '<div class="notch"><i></i></div>' +
     '<div class="ph-status"><span>LTE</span><span>오후 3:12</span><span>70%</span></div>' +
     '<div class="ph-head"><span class="ic">&#8249;</span><span class="t">가입신청서</span><span class="ic" style="text-align:right">&#215;</span></div>' +
     body +
-    (st.sheet && st.compare.length === 2 ? sheetHtml(st, key) : '') +
+    '<div id="sheetwrap-' + key + '"></div>' +
     '<div class="dim' + (st.alert ? ' on' : '') + '">' +
-      (st.alert ? '<div class="alert"><p>' + esc(st.alert.msg) + '</p><button onclick="okAlert(\'' + key + '\')">확인</button></div>' : '') +
+      (st.alert ? '<div class="alert" role="alertdialog"><p>' + esc(st.alert.msg) + '</p><button onclick="okAlert(\'' + key + '\')">확인</button></div>' : '') +
     '</div>' +
-    '<div class="toast' + (st.toast ? ' on' : '') + '">' + esc(st.toast || '') + '</div>';
+    '<div class="toast" id="toast-' + key + '" role="status" aria-live="polite"></div>';
 
+  paintSheet(key);
+  paintToast(key);
   if(st.screen === 'plan' && !isCurated(st)) bindScroll(key);
   if(key === 'sim') document.getElementById('simState').textContent = stateLabel(st);
+}
+
+/* ── 부분 갱신 (surgical update) ──
+   전체 innerHTML 교체를 대체. 스크롤·포커스·진입 애니메이션이 보존된다. */
+function paintSheet(key){
+  var st = S[key], w = document.getElementById('sheetwrap-' + key);
+  if(!w) return;
+  w.innerHTML = (st.sheet && st.compare.length === 2) ? sheetHtml(st, key) : '';
+}
+function paintToast(key){
+  var st = S[key], t = document.getElementById('toast-' + key);
+  if(!t) return;
+  t.className = 'toast' + (st.toast ? ' on' : '');
+  t.textContent = st.toast || '';
+}
+function paintSticky(key){
+  var s = document.getElementById('sticky-' + key);
+  if(s) s.innerHTML = stickyHtml(S[key], key);
+}
+function paintCmpChip(key){
+  var st = S[key], c = document.getElementById('cmpchip-' + key);
+  if(!c) return;
+  c.className = 'chip' + (st.compare.length ? ' act' : '');
+  c.textContent = '비교 ' + st.compare.length + '/2';
+}
+function paintCmpBox(key, code){
+  var st = S[key], on = st.compare.indexOf(code) >= 0;
+  var b = document.getElementById('cmp-' + key + '-' + code);
+  if(!b) return;
+  b.className = 'cmpbox' + (on ? ' on' : '');
+  b.setAttribute('aria-pressed', on ? 'true' : 'false');
+  b.innerHTML = '<span class="cb' + (on ? ' on' : '') + '" aria-hidden="true">&#10003;</span>비교' + (on ? ' 담김' : ' 담기');
+}
+/* 선택 상태 — 해당 카드 2개(이전·현재)만 갱신 */
+function paintCardSel(key, code, on){
+  if(!code) return;
+  var c = document.getElementById('card-' + key + '-' + code);
+  var m = document.getElementById('cm-' + key + '-' + code);
+  if(c) c.className = 'card' + (on ? ' sel' : '');
+  if(m) m.setAttribute('aria-checked', on ? 'true' : 'false');
+}
+/* roving tabindex — radiogroup의 탭 스톱을 1개로 유지 */
+function setRoving(key, code){
+  var st = S[key];
+  if(st.focusCode && st.focusCode !== code){
+    var o = document.getElementById('cm-' + key + '-' + st.focusCode);
+    if(o) o.setAttribute('tabindex', '-1');
+  }
+  st.focusCode = code;
+  var n = document.getElementById('cm-' + key + '-' + code);
+  if(n) n.setAttribute('tabindex', '0');
+}
+function renderedCodes(st){
+  var L = tabList(st);
+  var lim = isCurated(st) ? L.length : Math.min(st.rendered, L.length);
+  var out = [];
+  for(var i=0;i<lim;i++) out.push(L[i].code);
+  return out;
 }
 
 function viewPlan(st, key){
@@ -1067,7 +1160,7 @@ function viewPlan(st, key){
        + opt('reco', isCurated(st) ? '주간 순위순' : '추천순', st.sort)
        + opt('price','낮은 가격순',st.sort) + opt('data','데이터 많은순',st.sort)
        + '</select>';
-  out += '<button class="chip' + (st.compare.length?' act':'') + '" onclick="openCmp(\'' + key + '\')">'
+  out += '<button id="cmpchip-' + key + '" class="chip' + (st.compare.length?' act':'') + '" onclick="openCmp(\'' + key + '\')">'
        + '비교 ' + st.compare.length + '/2</button>';
   out += '</div>';
 
@@ -1095,7 +1188,11 @@ function viewPlan(st, key){
          + '<button onclick="resetF(\'' + key + '\')">필터 초기화</button></div>';
   }else{
     var lim = isCurated(st) ? L.length : Math.min(st.rendered, L.length);
-    out += '<div class="list">';
+    // 탭 스톱 1개 — 선택 항목이 현재 목록에 있으면 그것, 없으면 첫 카드
+    var vis = []; for(var v=0;v<lim;v++) vis.push(L[v].code);
+    st.focusCode = (st.selected && vis.indexOf(st.selected) >= 0) ? st.selected : vis[0];
+    out += '<div class="list" role="radiogroup" aria-label="요금제 목록"'
+         + ' onkeydown="radioKey(event,\'' + key + '\')">';
     // 주간 탭은 요금제 고유의 주간 순위를 표기 (필터·정렬 후에도 순위 값 유지)
     for(var i=0;i<lim;i++) out += cardHtml(st, key, L[i], isCurated(st) ? L[i].rank : null, i);
     out += '</div>';
@@ -1105,17 +1202,20 @@ function viewPlan(st, key){
   }
   out += '</div>';
 
-  var sel = st.selected ? find(st.selected) : null;
-  out += '<div class="ph-sticky">';
-  if(sel){
-    out += '<div class="sum"><span class="nm">' + esc(sel.name) + '</span><span class="pr">월 ' + won(price(sel)) + '</span></div>';
-    out += '<button class="cta" onclick="confirmPlan(\'' + key + '\')">개통 시작하기 <span>&#8594;</span></button>';
-  }else{
-    out += '<div class="sum idle">요금제를 선택해 주세요.</div>';
-    out += '<button class="cta off" onclick="cta0(\'' + key + '\')">개통 시작하기 <span>&#8594;</span></button>';
-  }
-  out += '</div>';
+  out += '<div class="ph-sticky" id="sticky-' + key + '">' + stickyHtml(st, key) + '</div>';
   return out;
+}
+
+/* Sticky 바 — 선택 시 이 영역만 교체 (목록 재렌더 없음) */
+function stickyHtml(st, key){
+  var sel = st.selected ? find(st.selected) : null;
+  if(sel){
+    return '<div class="sum"><span class="nm">' + esc(sel.name) + '</span>'
+         + '<span class="pr">월 ' + won(price(sel)) + '</span></div>'
+         + '<button class="cta" onclick="confirmPlan(\'' + key + '\')">개통 시작하기 <span aria-hidden="true">&#8594;</span></button>';
+  }
+  return '<div class="sum idle">요금제를 선택해 주세요.</div>'
+       + '<button class="cta off" aria-disabled="true" onclick="cta0(\'' + key + '\')">개통 시작하기 <span aria-hidden="true">&#8594;</span></button>';
 }
 
 function tabBtn(key, id, label, on, best){
@@ -1127,34 +1227,50 @@ function opt(v,l,cur){ return '<option value="' + v + '"' + (cur===v?' selected'
 function cardHtml(st, key, p, rank, idx){
   var sel = st.selected === p.code;
   var cmpOn = st.compare.indexOf(p.code) >= 0;
-  var cls = 'card' + (sel?' sel':'');
   var delay = Math.min(idx||0, 8) * 0.03;
-  var h = '<button class="' + cls + '" style="animation-delay:' + delay + 's" onclick="pick(\'' + key + '\',\'' + p.code + '\')">';
-  h += '<div class="card-top">';
-  if(rank) h += '<span class="rank">' + rank + '</span>';
+  var tabi = (st.focusCode === p.code) ? '0' : '-1';
+
+  // 컨테이너(div) — 보더·선택 상태를 담당
+  var h = '<div class="card' + (sel?' sel':'') + '" id="card-' + key + '-' + p.code + '"'
+        + ' style="animation-delay:' + delay + 's">';
+
+  // ① 선택 버튼 — role=radio + aria-checked로 상태를 보조기술에 전달
+  h += '<button class="card-main" id="cm-' + key + '-' + p.code + '"'
+     + ' role="radio" aria-checked="' + (sel?'true':'false') + '" tabindex="' + tabi + '"'
+     + ' onclick="pick(\'' + key + '\',\'' + p.code + '\')">';
+  h += '<span class="card-top">';
+  if(rank) h += '<span class="rank" aria-label="주간 ' + rank + '위">' + rank + '</span>';
   h += '<span class="badges">';
   var bs = p.badges.slice(0,2);   // C-15 / C-37
   for(var i=0;i<bs.length;i++){
     h += '<span class="bdg ' + (BADGE_CLASS[bs[i]]||'') + '">' + esc(bs[i]) + '</span>';
   }
   h += '</span>';
-  h += '<span class="radio"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg><span class="hit"></span></span>';
-  h += '</div>';
-  h += '<div class="pname">' + esc(p.name) + '</div>';
-  h += '<div class="prices">';
+  // 시각적 라디오 — 상태는 aria-checked가 전달하므로 장식으로 처리
+  h += '<span class="radio" aria-hidden="true"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg><span class="hit"></span></span>';
+  h += '</span>';
+  h += '<span class="pname">' + esc(p.name) + '</span>';
+  h += '<span class="prices">';
   if(p.promo != null) h += '<span class="p-old">' + won(p.sale) + '</span><span class="p-new">' + won(p.promo) + '</span><span class="per">/월</span>';
   else                h += '<span class="p-only">' + won(p.sale) + '</span><span class="per">/월</span>';
-  h += '</div>';
+  h += '</span>';
   // 스펙 인포 블록 — 속도 안내를 스펙 하단에 포함 (혜택보다 위, 라벨 없이 본문만)
-  h += '<div class="info">';
+  h += '<span class="info">';
   h += infoChips(p);
-  h += '<div class="sp">' + esc(p.speed) + '</div>';
-  h += '</div>';
-  if(p.benefit) h += '<div class="benefit"><span class="gi">&#127873;</span>' + esc(p.benefit) + '</div>';
-  // 카드 내 비교 선택
-  h += '<div class="cmprow"><span class="cmpbox' + (cmpOn?' on':'') + '" onclick="cmpTap(event,\'' + key + '\',\'' + p.code + '\')">'
-     + '<span class="cb' + (cmpOn?' on':'') + '">&#10003;</span>비교' + (cmpOn?' 담김':' 담기') + '</span></div>';
+  h += '<span class="sp">' + esc(p.speed) + '</span>';
+  h += '</span>';
+  if(p.benefit) h += '<span class="benefit"><span class="gi" aria-hidden="true">&#127873;</span>' + esc(p.benefit) + '</span>';
   h += '</button>';
+
+  // ② 비교 담기 — 카드 버튼의 형제 button. 중첩 없음 → 키보드로 도달 가능
+  h += '<div class="cmprow">'
+     + '<button class="cmpbox' + (cmpOn?' on':'') + '" id="cmp-' + key + '-' + p.code + '"'
+     + ' aria-pressed="' + (cmpOn?'true':'false') + '" aria-label="' + esc(p.name) + ' 비교 담기"'
+     + ' onclick="cmpTap(event,\'' + key + '\',\'' + p.code + '\')">'
+     + '<span class="cb' + (cmpOn?' on':'') + '" aria-hidden="true">&#10003;</span>비교' + (cmpOn?' 담김':' 담기')
+     + '</button></div>';
+
+  h += '</div>';
   return h;
 }
 
@@ -1214,10 +1330,13 @@ function sheetHtml(st, key){
   function row(label, fa, fb, cls){
     return '<tr><td>' + label + '</td><td class="' + (cls||'') + '">' + fa + '</td><td class="' + (cls||'') + '">' + fb + '</td></tr>';
   }
-  var h = '<div class="sheet on"><div class="grab"><i></i></div><div class="sheet-h"><b>요금제 비교</b><button onclick="closeSheet(\'' + key + '\')">&#215;</button></div>';
+  var h = '<div class="sheet on" role="group" aria-label="요금제 비교"><div class="grab"><i></i></div>'
+        + '<div class="sheet-h"><b>요금제 비교</b>'
+        + '<button aria-label="비교 닫기" onclick="closeSheet(\'' + key + '\')">&#215;</button></div>';
   function selCell(p){
     var on = st.selected === p.code;
-    return '<button class="selbtn' + (on?' on':'') + '" onclick="pickFromSheet(\'' + key + '\',\'' + p.code + '\')">'
+    return '<button class="selbtn' + (on?' on':'') + '" aria-label="' + esc(p.name) + ' 선택"'
+         + ' onclick="pickFromSheet(\'' + key + '\',\'' + p.code + '\')">'
          + (on ? '선택됨' : '요금제 선택') + '</button>';
   }
   h += '<div class="sheet-b"><table class="ctable">';
@@ -1297,6 +1416,8 @@ function setF(key, f, v){ var st=S[key]; st[f]=v; st.rendered=8; render(key); }
 function resetF(key){ var st=S[key]; st.fPrice=''; st.fData=''; st.forceEmpty=false; st.rendered=8; render(key); }
 function setSort(key, v){ var st=S[key]; st.sort=v; st.rendered=8; render(key); }
 
+/* 목록 자체를 다시 그려야 하는 경우(점진 렌더 등)의 스크롤 보존 장치.
+   선택·비교·토스트는 부분 갱신으로 처리하므로 이 경로를 타지 않는다. */
 function keepScroll(key, fn){
   var b = document.getElementById('body-'+key);
   var y = b ? b.scrollTop : 0;               // C-18 스크롤 유지
@@ -1306,52 +1427,88 @@ function keepScroll(key, fn){
   if(nb) nb.scrollTop = y;
 }
 
+/* 카드 선택 — 목록을 재렌더하지 않고 해당 카드 2개(이전·현재)와 Sticky만 갱신
+   → 스크롤 위치 유지(C-18), 키보드 포커스 유지, 진입 애니메이션 재생 없음 */
 function pick(key, code){
-  keepScroll(key, function(){ S[key].selected = code; });
+  var st = S[key];
+  var prev = st.selected;
+  if(prev === code) return;
+  st.selected = code;
+  paintCardSel(key, prev, false);
+  paintCardSel(key, code, true);
+  setRoving(key, code);
+  paintSticky(key);
 }
 
-/* 카드 내 비교 담기 — 카드 선택과 분리 */
+/* radiogroup 키보드 모델 — 방향키로 이동·선택, Home/End 지원 */
+function radioKey(ev, key){
+  var k = ev.key, st = S[key];
+  var step = (k==='ArrowDown'||k==='ArrowRight') ? 1 : ((k==='ArrowUp'||k==='ArrowLeft') ? -1 : 0);
+  var codes = renderedCodes(st);
+  if(!codes.length) return;
+  var cur = codes.indexOf(st.focusCode), nx;
+  if(step){ nx = (cur < 0) ? 0 : (cur + step + codes.length) % codes.length; }
+  else if(k === 'Home'){ nx = 0; }
+  else if(k === 'End'){ nx = codes.length - 1; }
+  else return;
+  if(ev.preventDefault) ev.preventDefault();
+  pick(key, codes[nx]);
+  var el = document.getElementById('cm-' + key + '-' + codes[nx]);
+  if(el && el.focus) el.focus();
+}
+
+/* 카드 내 비교 담기 — 카드 선택과 분리. 시트·칩·해당 카드만 갱신 */
 function cmpTap(ev, key, code){
-  if(ev){ ev.stopPropagation(); ev.preventDefault(); }
+  if(ev && ev.stopPropagation) ev.stopPropagation();
   var st = S[key];
   var i = st.compare.indexOf(code);
   if(i >= 0){
     st.compare.splice(i, 1);
     if(st.compare.length < 2) st.sheet = false;   // 2건 미만이면 비교 시트 닫음
-    keepScroll(key, function(){});
+    paintCmpBox(key, code); paintCmpChip(key); paintSheet(key);
     return;
   }
   if(st.compare.length >= 2){
-    flash(key, '비교는 최대 2개까지 담을 수 있습니다');
+    setToast(key, '비교는 최대 2개까지 담을 수 있습니다');
     return;
   }
   st.compare.push(code);
-  if(st.compare.length === 2){
-    st.sheet = true;
-    render(key);
-  }else{
-    keepScroll(key, function(){});
-  }
+  if(st.compare.length === 2) st.sheet = true;
+  paintCmpBox(key, code); paintCmpChip(key); paintSheet(key);
 }
 
 /* 상단 비교 버튼 — 담긴 개수에 따라 안내 또는 시트 오픈 */
 function openCmp(key){
   var st = S[key];
-  if(st.compare.length === 2){ st.sheet = true; render(key); return; }
-  if(st.compare.length === 0){ flash(key, '카드에서 비교할 요금제를 담아 주세요 (최대 2개)'); return; }
-  flash(key, '1개 더 담으면 비교할 수 있습니다');
+  if(st.compare.length === 2){ st.sheet = true; paintSheet(key); return; }
+  if(st.compare.length === 0){ setToast(key, '카드에서 비교할 요금제를 담아 주세요 (최대 2개)'); return; }
+  setToast(key, '1개 더 담으면 비교할 수 있습니다');
 }
-function closeSheet(key){ var st=S[key]; st.sheet=false; render(key); }
-function clearCmp(key){ var st=S[key]; st.sheet=false; st.compare=[]; render(key); }
+function closeSheet(key){ S[key].sheet = false; paintSheet(key); }
+function clearCmp(key){
+  var st = S[key], old = st.compare.slice();
+  st.sheet = false; st.compare = [];
+  paintSheet(key); paintCmpChip(key);
+  for(var i=0;i<old.length;i++) paintCmpBox(key, old[i]);
+}
 function pickFromSheet(key, code){
-  var st=S[key]; st.sheet=false; st.compare=[]; st.selected=code; render(key);
+  var st = S[key], old = st.compare.slice();
+  st.sheet = false; st.compare = [];
+  paintSheet(key); paintCmpChip(key);
+  for(var i=0;i<old.length;i++) paintCmpBox(key, old[i]);
+  pick(key, code);
 }
-function cta0(key){ flash(key, '요금제를 먼저 선택해 주세요'); logStep(key, 'STEP 12', 'f', 'selectedPlan = null → 비활성 CTA 안내 토스트'); }
-function flash(key, msg){
+function cta0(key){ setToast(key, '요금제를 먼저 선택해 주세요'); logStep(key, 'STEP 12', 'f', 'selectedPlan = null → 비활성 CTA 안내 토스트'); }
+
+/* 토스트 — 전용 컨테이너만 갱신. 표시·소멸 모두 목록을 건드리지 않는다 */
+function setToast(key, msg){
   var st = S[key];
-  st.toast = msg; render(key);
-  setTimeout(function(){ st.toast = null; render(key); }, 1900);
+  st.toast = msg;
+  paintToast(key);
+  if(st.toastT) clearTimeout(st.toastT);
+  st.toastT = setTimeout(function(){ st.toast = null; st.toastT = null; paintToast(key); }, 1900);
 }
+function flash(key, msg){ setToast(key, msg); }   // 하위 호환
 function setOpen(key, v){ S[key].openMethod = v; render(key); }
 function fromS01(key){
   var st = S[key];
@@ -1400,11 +1557,7 @@ function bindScroll(key){
     if(b.scrollTop + b.clientHeight >= s.offsetTop - 40){
       var total = tabList(st).length;
       if(st.rendered < total){
-        var y = b.scrollTop;
-        st.rendered = Math.min(st.rendered + 6, total);
-        render(key);
-        var nb = document.getElementById('body-'+key);
-        if(nb) nb.scrollTop = y;
+        keepScroll(key, function(){ st.rendered = Math.min(st.rendered + 6, total); });
       }
     }
   };
