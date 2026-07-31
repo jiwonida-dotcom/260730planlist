@@ -201,6 +201,14 @@ select{font-family:inherit;cursor:pointer}
 .opt small{font-size:11.5px;color:var(--muted);display:block;margin-top:3px}
 .ro{border:1px solid var(--line);border-radius:var(--r);padding:16px;background:linear-gradient(180deg,#FCFCFE,#F8F8FB)}
 .ro .lock{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--muted-2);margin-top:12px;font-weight:700;background:var(--surface);border:1px solid var(--line);border-radius:7px;padding:4px 9px}
+.s3-step{display:flex;align-items:center;justify-content:flex-end;gap:7px;margin-bottom:16px;font-size:11.5px;color:var(--muted)}
+.s3-step span{width:20px;height:20px;border-radius:50%;background:var(--bg);color:var(--muted);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800}
+.s3-step span.on{background:var(--main);color:#fff}
+.s3-step b{font-weight:700;color:var(--text);margin-right:4px}
+.s3-pick{display:flex;gap:10px;margin-top:14px}
+.s3-pick>div{flex:1;border:1px solid var(--line);border-radius:var(--r);padding:15px 10px;text-align:center;background:var(--surface)}
+.s3-pick b{display:block;font-size:13px;font-weight:800;color:var(--text)}
+.s3-pick small{display:block;margin-top:5px;font-size:11px;color:var(--muted);line-height:1.4}
 .done{padding:34px 8px 20px;text-align:center;animation:fadeIn .3s ease}
 .done .ck{width:60px;height:60px;border-radius:50%;background:var(--ok-bg);color:var(--ok);font-size:28px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;animation:pop .35s cubic-bezier(.2,1.6,.5,1) both}
 @keyframes pop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
@@ -455,7 +463,7 @@ code.k{background:var(--bg);border:1px solid var(--line);border-radius:5px;paddi
     <div>
       <div class="panel" style="margin-bottom:18px">
         <h3><span class="dot"></span>시나리오</h3>
-        <div class="sub">정상 진입 2건 + 예외 1건(조회·필터 결과 0건). 클릭하면 검증 시퀀스가 STEP 단위로 실행됩니다.</div>
+        <div class="sub">정상 진입 2건(요금제 선택 후 / 선택 전) + 예외 1건. 클릭하면 검증 시퀀스가 STEP 단위로 실행됩니다.</div>
         <div class="scn" id="scnList"></div>
       </div>
       <div class="panel">
@@ -588,10 +596,10 @@ code.k{background:var(--bg);border:1px solid var(--line);border-radius:5px;paddi
   <table class="r-t">
     <thead><tr><th>ID</th><th>항목</th><th>확정 내용</th></tr></thead>
     <tbody>
-      <tr><td class="id"><span class="cid">C-19</span></td><td>전진 배치 · CTA</td><td>요금제 선택을 신청서 앞단으로 이동. 확정 CTA는 <b>"개통 시작하기"</b></td></tr>
+      <tr><td class="id"><span class="cid">C-19</span></td><td>전진 배치 · CTA</td><td>요금제 선택을 신청서 앞단으로 이동. 확정 CTA는 <b>"신청서 작성하기"</b> — 선행 화면(S-01)의 "개통 시작하기"와 구분해 연속 중복을 제거</td></tr>
       <tr><td class="id"><span class="cid">C-24</span></td><td>TO-BE 위치</td><td>요금제 선택 = <b>개통 방법 직후 · 상품 정보 입력 이전</b>. "선택된 요금제가 있나?" 판정을 흐름 중간에서 <b>진입부로 이동</b>해, 상품 정보 입력 이후 구간을 두 경로 공통의 단일 흐름으로 선형화</td></tr>
       <tr><td class="id"><span class="cid">C-23</span></td><td>이중 진입 경로</td><td>① 요금제 선택 후 진입(기선택) ② 개통 방법 선택 후 진입(미선택)</td></tr>
-      <tr><td class="id"><span class="cid">C-31</span></td><td>2케이스 시나리오</td><td><b>A</b>(요금제 선택/개통방식 미선택, 기본): 개통방식 화면 유입 + 선택 요금제 <b>정보 노출</b>, 변경 수단 없음 / <b>B</b>(요금제 미선택/개통방식 선택, 대안): 요금제 화면 노출</td></tr>
+      <tr><td class="id"><span class="cid">C-31</span></td><td>2케이스 시나리오</td><td><b>A · 요금제 선택 후 진행</b>: 개통 방법 선택 &#8594; <b>상품 정보 입력</b>. 요금제 화면 미노출, S-01에 선택 요금제 <b>정보만 노출</b>(변경 수단 없음) / <b>B · 요금제 선택 전 진행</b>: 개통 방법 선택 &#8594; <b>요금제 선택</b> &#8594; 상품 정보 입력</td></tr>
       <tr><td class="id"><span class="cid">C-25</span></td><td>기선택 시 스킵</td><td>경로①은 요금제 선택 UI 미노출 — 재노출 자체가 이탈 요인. 요금제 화면은 경로② 전용</td></tr>
       <tr><td class="id"><span class="cid">C-12</span></td><td>세션 승계</td><td>두 케이스 모두 상품 정보 입력 진입 시점에 요금제 확정 상태 보장</td></tr>
       <tr><td class="id"><span class="cid">C-33</span></td><td>요금제 단계 예외 없음</td><td>요금제 선택 단계에 표기된 예외 조건 없음 — 유심 유형·가입 방법 제약 요금제 부재</td></tr>
@@ -606,7 +614,7 @@ code.k{background:var(--bg);border:1px solid var(--line);border-radius:5px;paddi
   <div class="r-grid r-g2">
     <div class="r-ba">
       <div class="as"><div class="t">AS-IS</div>카드 선택 → 하단 '다음'으로 이동하지만 <b>무엇을 골랐는지 표시 없음</b> → 확인하려면 위로 되돌아가야 함 → 확인 영역은 다음 단계에서 복귀해야 나타남</div>
-      <div class="to"><div class="t">TO-BE</div>카드 클릭 → 그 자리에서 보더·라디오 메인 컬러 전환 → sticky 바에 요금제명·요금 요약 + '개통 시작하기' 즉시 노출</div>
+      <div class="to"><div class="t">TO-BE</div>카드 클릭 → 그 자리에서 보더·라디오 메인 컬러 전환 → sticky 바에 요금제명·요금 요약 + '신청서 작성하기' 즉시 노출</div>
     </div>
     <div class="r-ba">
       <div class="as"><div class="t">AS-IS</div>자동 회전 배너 클릭 = 즉시 선택 / 아코디언 7개 중 6개 접힘 · 개수·가격 힌트 없음</div>
@@ -685,7 +693,7 @@ code.k{background:var(--bg);border:1px solid var(--line);border-radius:5px;paddi
       <tr><td>목록 컨트롤</td><td>전 탭 공통: "요금제 N개" + 필터 + 정렬 + 비교</td><td><span class="cid">C-22</span> <span class="cid">C-27</span> <span class="cid">C-35</span></td></tr>
       <tr><td>목록</td><td>단일 목록(그룹 헤더 없음), 스크롤 점진 렌더</td><td><span class="cid">C-21</span> <span class="cid">C-39</span></td></tr>
       <tr><td>카드</td><td>TOP 배지(≤2) / 요금제명 / 가격 / 스펙 인포 면 / 혜택 면 / 라디오 / 비교 담기</td><td><span class="cid">C-15</span>~<span class="cid">C-18</span> <span class="cid">C-26</span> <span class="cid">C-30</span> <span class="cid">C-37</span></td></tr>
-      <tr><td>Sticky 바</td><td>선택 요금제 요약 + "개통 시작하기"</td><td><span class="cid">C-20</span></td></tr>
+      <tr><td>Sticky 바</td><td>선택 요금제 요약 + "신청서 작성하기"</td><td><span class="cid">C-20</span></td></tr>
       <tr><td>제거 영역</td><td>상단 추천 배너 · 카테고리 아코디언 · 문서 최하단 CTA</td><td><span class="cid">C-13</span> <span class="cid">C-21</span> <span class="cid">C-20</span></td></tr>
     </tbody>
   </table>
@@ -758,7 +766,7 @@ code.k{background:var(--bg);border:1px solid var(--line);border-radius:5px;paddi
       <tr><td>컨트롤</td><td>정렬</td><td>클라이언트 처리, 리로드 없음</td><td><b>조작</b></td></tr>
       <tr><td>컨트롤</td><td>비교</td><td>담긴 개수 상시 표기(<code class="k">비교 N/2</code>), 탭 이동 시 유지(C-35)</td><td><b>조작</b></td></tr>
       <tr><td>Sticky</td><td>선택 요약</td><td>미선택: "요금제를 선택해 주세요." / 선택: "{요금제명} 월 {요금}원"</td><td>불가</td></tr>
-      <tr><td>Sticky</td><td>CTA</td><td>"개통 시작하기" — 미선택 비활성 / 선택 활성</td><td><b>활성 시 클릭</b></td></tr>
+      <tr><td>Sticky</td><td>CTA</td><td>"신청서 작성하기" — 미선택 비활성 / 선택 활성</td><td><b>활성 시 클릭</b></td></tr>
     </tbody>
   </table>
 
@@ -920,7 +928,7 @@ code.k{background:var(--bg);border:1px solid var(--line);border-radius:5px;paddi
     <thead><tr><th>구분</th><th>확정 값</th></tr></thead>
     <tbody>
       <tr><td>화면 헤드라인</td><td>"가입하실 요금제를 선택해 주세요."</td></tr>
-      <tr><td>확정 CTA</td><td>"개통 시작하기"</td></tr>
+      <tr><td>확정 CTA</td><td>"신청서 작성하기"</td></tr>
       <tr><td>Sticky 미선택 / 선택</td><td>"요금제를 선택해 주세요." / "{요금제명} 월 {프로모션가}원"</td></tr>
       <tr><td>탭 명칭</td><td>주간(BEST) / 전체 / LTE / 5G</td></tr>
       
@@ -1232,10 +1240,10 @@ function stickyHtml(st, key){
   if(sel){
     return '<div class="sum"><span class="nm">' + esc(sel.name) + '</span>'
          + '<span class="pr">월 ' + won(price(sel)) + '</span></div>'
-         + '<button class="cta" onclick="confirmPlan(\'' + key + '\')">개통 시작하기 <span aria-hidden="true">&#8594;</span></button>';
+         + '<button class="cta" onclick="confirmPlan(\'' + key + '\')">신청서 작성하기 <span aria-hidden="true">&#8594;</span></button>';
   }
   return '<div class="sum idle">요금제를 선택해 주세요.</div>'
-       + '<button class="cta off" aria-disabled="true" onclick="cta0(\'' + key + '\')">개통 시작하기 <span aria-hidden="true">&#8594;</span></button>';
+       + '<button class="cta off" aria-disabled="true" onclick="cta0(\'' + key + '\')">신청서 작성하기 <span aria-hidden="true">&#8594;</span></button>';
 }
 
 function tabBtn(key, id, label, on, best){
@@ -1325,12 +1333,18 @@ function optHtml(key, id, t, d, on){
 
 function viewS03(st, key){
   var p = find(st.selected || st.preSelected);
-  var out = '<div class="ph-body"><div class="done">';
+  var out = '<div class="ph-body">';
+  out += '<div class="s3-step"><span class="on">1</span><b>가입조건</b><span>2</span><span>3</span></div>';
+  out += '<div class="h1">유심(USIM) / 이심(eSIM)을 선택하세요.</div>';
+  out += '<div class="s3-pick">'
+       + '<div><b>유심(USIM) 개통</b><small>배송받은 유심 카드로 개통</small></div>'
+       + '<div><b>이심(eSIM) 개통</b><small>기기에 내장된 칩으로 개통</small></div></div>';
+  out += '<div class="done" style="padding-top:22px">';
   out += '<div class="ck">&#10003;</div>';
-  out += '<h4>S-03 상품 정보 입력으로 이동</h4>';
+  out += '<h4>S-03 상품 정보 입력 진입</h4>';
   out += '<p>요금제가 확정 상태로 승계되었습니다.</p>';
   out += '<dl class="carry"><dt>승계된 값</dt>';
-  out += '<div><span>진입 케이스</span><span>' + (st.caseType==='A' ? 'A · 요금제 선택 후 진입' : 'B · 개통 방법 선택 후 진입') + '</span></div>';
+  out += '<div><span>진입 케이스</span><span>' + (st.caseType==='A' ? 'A · 요금제 선택 후 진행' : 'B · 요금제 선택 전 진행') + '</span></div>';
   out += '<div><span>개통 방법</span><span>' + (OPEN_LABEL[st.openMethod]||'-') + '</span></div>';
   if(p){
     out += '<div><span>요금제</span><span>' + esc(p.name) + '</span></div>';
@@ -1587,8 +1601,8 @@ function bindScroll(key){
    시나리오 시뮬레이터
    ========================================================= */
 var SCN = [
-  {id:'N1', kind:'n', t:'정상 · 케이스 B (미선택 진입)', d:'개통 방법 확정 → 요금제 화면 노출 → 선택 → 확정 → S-03'},
-  {id:'N2', kind:'n', t:'정상 · 케이스 A (기선택 진입)', d:'기선택 유효 → S-01에 요금제 정보 노출, S-02 스킵 (C-25)'},
+  {id:'N2', kind:'n', t:'정상 · 케이스 A — 요금제 선택 후 진행', d:'개통 방법 선택 → 상품 정보 입력 (요금제 화면 미노출, C-25)'},
+  {id:'N1', kind:'n', t:'정상 · 케이스 B — 요금제 선택 전 진행', d:'개통 방법 선택 → 요금제 선택 → 상품 정보 입력'},
   {id:'E2', kind:'e', t:'EX-02 조회·필터 결과 0건', d:'목록 영역만 빈 상태, 탭·컨트롤 유지 (Alert 없음)'}
 ];
 
@@ -1635,7 +1649,7 @@ function runScn(id){
   var st = S.sim;
 
   if(id === 'N1'){
-    logHead('정상 · 케이스 B');
+    logHead('정상 · 케이스 B — 요금제 선택 전 진행');
     logStep('sim','STEP 1','p','preSelectedPlan = null → 케이스 B');
     logStep('sim','STEP 2','s','케이스 A 분기 미해당');
     logStep('sim','STEP 3','p','openMethodCd = agent');
@@ -1645,15 +1659,15 @@ function runScn(id){
     logStep('sim','STEP 5','p','탭 데이터 구성 — 주간/전체/LTE/5G');
     logStep('sim','STEP 6','p','가격·배지 렌더 (C-30 / C-37 상위 2개)');
     logStep('sim','STEP 7','p','selectedPlan = null · Sticky 비활성');
-    logStep('sim','INFO','i','카드를 선택하고 개통 시작하기를 눌러 STEP 8~14를 확인하세요');
+    logStep('sim','INFO','i','카드를 선택하고 신청서 작성하기를 눌러 STEP 8~14를 확인하세요');
   }
   else if(id === 'N2'){
-    logHead('정상 · 케이스 A');
+    logHead('정상 · 케이스 A — 요금제 선택 후 진행');
     logStep('sim','STEP 1','p','preSelectedPlan = P01 (파라미터+세션 판정)');
     logStep('sim','STEP 2','p','valid = true AND 사용여부 = 사용 → 케이스 A');
     logStep('sim','STEP 3~7','s','요금제 화면(S-02) 미노출 — C-25');
     st.caseType='A'; st.preSelected='P01'; st.screen='s01'; st.openMethod=null;
-    logStep('sim','INFO','i','S-01에 요금제 정보 read-only 노출 · 개통 방법 선택 후 진행');
+    logStep('sim','INFO','i','S-01에 요금제 정보 read-only 노출 → 개통 방법 선택 시 상품 정보 입력으로 직행');
   }
   else if(id === 'E2'){
     logHead('EX-02 결과 0건');
