@@ -282,6 +282,13 @@ select{font-family:inherit;cursor:pointer}
 .empty button:focus-visible,.sheet-h button:focus-visible,.sheet-foot button:focus-visible,
 .opt:focus-visible{outline:2.5px solid var(--main-deep);outline-offset:2px;border-radius:10px}
 .card-main:focus-visible{outline-offset:3px}
+/* 카드 내부 포커스 링이 카드 보더와 겹쳐 이중선으로 보이는 문제 해소 —
+   포커스 표시를 카드 바깥 헤일로로 이동 (:has 미지원 시 위 아웃라인이 폴백) */
+@supports selector(:has(*)){
+  .card-main:focus-visible{outline:none}
+  .card:has(.card-main:focus-visible){box-shadow:0 0 0 3px rgba(91,75,225,.30)}
+  .card.sel:has(.card-main:focus-visible){box-shadow:0 0 0 3px rgba(91,75,225,.30), 0 6px 20px rgba(91,75,225,.15)}
+}
 
 /* ===== 리포트 크롬 (r- 접두어로 프로토타입과 분리) ===== */
 body{background:linear-gradient(180deg,#F3F3F8 0%,#EBEBF2 240px,#F3F3F8 100%)}
