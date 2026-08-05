@@ -92,9 +92,12 @@ select{font-family:inherit;cursor:pointer}
 .phone.pc .ph-body{padding:26px 28px 12px}
 .phone.pc .ph-sticky{padding:14px 28px 18px}
 .phone.pc .list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:stretch}
-/* 2열에서 같은 행 카드의 하단 비교 영역을 같은 높이로 정렬 */
+/* 2열에서 같은 행 카드의 하단 비교 영역을 같은 높이로 정렬.
+   button은 여백이 생기면 내용을 세로 중앙에 맞추므로, 짧은 카드의 요금제명·가격이
+   옆 카드보다 아래로 밀린다(관측 28px). flex 컬럼으로 바꿔 상단 정렬을 고정하고
+   남는 여백은 하단에 모은다 — 카드 간 정보 행이 가로로 맞춰진다 */
 .phone.pc .card{display:flex;flex-direction:column}
-.phone.pc .card-main{flex:1}
+.phone.pc .card-main{flex:1;display:flex;flex-direction:column;justify-content:flex-start}
 /* PC 필터 패널 — 조건 2열 · 라벨 상단 · 액션 우측 정렬
    (1열 + 전체폭 셀렉트는 모바일 관성. 644px에서 세로 232→약 160px) */
 .phone.pc .fb-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
