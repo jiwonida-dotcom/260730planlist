@@ -92,7 +92,10 @@ select{font-family:inherit;cursor:pointer}
 .phone.pc .ph-head .ic{width:34px;font-size:21px}
 .phone.pc .ph-body{padding:26px 28px 12px}
 .phone.pc .ph-sticky{padding:14px 28px 18px}
-.phone.pc .list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:start}
+.phone.pc .list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:stretch}
+/* 2열에서 같은 행 카드의 하단 비교 영역을 같은 높이로 정렬 */
+.phone.pc .card{display:flex;flex-direction:column}
+.phone.pc .card-main{flex:1}
 .phone.pc .h1{font-size:22px;line-height:1.45}
 .phone.pc .s3-pick>div{padding:20px 12px}
 .phone.pc .sheet{max-width:644px;left:50%;transform:translateX(-50%)}
