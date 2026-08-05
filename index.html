@@ -50,6 +50,8 @@ select{font-family:inherit;cursor:pointer}
 /* ===== 레이아웃 ===== */
 .split{display:grid;grid-template-columns:minmax(0,1fr) 418px;gap:28px;align-items:start}
 .solo{display:flex;justify-content:center;gap:28px;align-items:flex-start;flex-wrap:wrap}
+.split.pcwide{grid-template-columns:minmax(0,1fr)}
+.split.pcwide .panel-side{margin-top:4px}
 @media(max-width:980px){.split{grid-template-columns:1fr}.panel-side{order:2}}
 
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:22px;box-shadow:var(--shadow-s)}
@@ -61,8 +63,17 @@ select{font-family:inherit;cursor:pointer}
 .refbar b{color:var(--text)}
 .refbar .kbd{display:inline-block;background:var(--main-ghost);color:var(--main);border:1px solid var(--main-mid);border-radius:6px;padding:0 7px;font-size:10.5px;font-weight:800;margin:0 1px}
 
-/* ===== 폰 프레임 ===== */
+/* ===== 기기 프레임 ===== */
+/* PC 실측 기준 (www.uplusumobile.com/onsale/joinHowtoOpen, 2026-08 관측)
+   신청서는 오버레이 위 '풀 팝업' — 설계 1000px에 zoom:.7 → 실렌더 700px
+   패널 700 / 콘텐츠 644 / 헤더 84 / 카드 315 · gap 14 / 브레이크포인트 768–769 */
 .phone-col{display:flex;flex-direction:column;align-items:center;gap:12px;position:sticky;top:68px}
+.phone-col.pc{background:rgba(24,24,48,.42);padding:20px;border-radius:22px;gap:14px}
+.phone-col.pc .badge-note{color:#fff;opacity:.92}
+.devtog{display:inline-flex;gap:4px;background:var(--bg);padding:4px;border-radius:12px;margin-left:6px}
+.devtog button{padding:8px 13px;border-radius:9px;font-size:12.5px;font-weight:700;color:var(--muted);transition:all .15s}
+.devtog button.on{background:var(--surface);color:var(--main);box-shadow:var(--shadow-s)}
+.devtog button:hover:not(.on){color:var(--text)}
 .phone{width:394px;max-width:100%;height:940px;max-height:calc(100vh - 96px);min-height:660px;background:var(--surface);border:1px solid var(--line-2);border-radius:34px;box-shadow:var(--shadow-l);overflow:hidden;display:flex;flex-direction:column;position:relative}
 .notch{flex-shrink:0;height:24px;display:flex;align-items:flex-end;justify-content:center}
 .notch i{width:110px;height:9px;background:var(--bg-deep);border-radius:99px}
@@ -73,6 +84,20 @@ select{font-family:inherit;cursor:pointer}
 .ph-body{flex:1;overflow-y:auto;overflow-x:hidden;padding:18px 16px 10px;position:relative;overscroll-behavior:contain}
 .ph-sticky{flex-shrink:0;border-top:1px solid var(--line);background:rgba(255,255,255,.96);backdrop-filter:blur(8px);padding:10px 16px calc(14px + env(safe-area-inset-bottom,0px));box-shadow:0 -6px 18px rgba(22,22,50,.05)}
 .badge-note{font-size:11px;color:var(--muted-2);text-align:center;font-weight:600}
+
+/* --- PC 풀 팝업 모드 --- */
+.phone.pc{width:700px;border-radius:10px;border-color:var(--line)}
+.phone.pc .notch,.phone.pc .ph-status{display:none}
+.phone.pc .ph-head{height:84px;padding:0 28px;font-size:18px;border-bottom:1px solid #ddd}
+.phone.pc .ph-head .ic{width:34px;font-size:21px}
+.phone.pc .ph-body{padding:26px 28px 12px}
+.phone.pc .ph-sticky{padding:14px 28px 18px}
+.phone.pc .list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:start}
+.phone.pc .h1{font-size:22px;line-height:1.45}
+.phone.pc .s3-pick>div{padding:20px 12px}
+.phone.pc .sheet{max-width:644px;left:50%;transform:translateX(-50%)}
+.phone.pc .alert{max-width:420px}
+@media (max-width:820px){ .phone.pc{width:100%;max-width:394px} .phone.pc .list{grid-template-columns:1fr} }
 .reload-under{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:99px;border:1px solid var(--line-2);background:var(--surface);font-size:11.5px;font-weight:700;color:var(--muted);transition:all .15s}
 .reload-under:hover{color:var(--main);border-color:var(--main-mid)}
 .reload-under svg{width:12px;height:12px;stroke:currentColor;stroke-width:2.4;fill:none}
@@ -447,19 +472,23 @@ code.k{background:var(--bg);border:1px solid var(--line);border-radius:5px;paddi
   <button id="nav-sim" onclick="setView('sim')">시나리오 시뮬레이터</button>
   <button class="reload-top" style="margin-left:6px" onclick="reloadActive()">
     <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-2.64-6.36M21 3v6h-6"/></svg>리로드</button>
+  <span class="devtog" role="group" aria-label="화면 크기 전환">
+    <button id="dev-mobile" class="on" aria-pressed="true" onclick="setDevice('mobile')">모바일 394</button>
+    <button id="dev-pc" aria-pressed="false" onclick="setDevice('pc')">PC 700</button>
+  </span>
 </div>
 
 <div id="v-proto" class="view on">
   <div class="solo">
     <div class="phone-col">
       <div class="phone" id="ph1"></div>
-      <div class="badge-note">394 × 940 · 모바일 우선 (C-03 · 트래픽 81%)</div>
+      <div class="badge-note" id="frameNote">394 × 940 · 모바일 우선 (C-03 · 트래픽 81%)</div>
     </div>
   </div>
 </div>
 
 <div id="v-sim" class="view">
-  <div class="split">
+  <div class="split" id="simSplit">
     <div>
       <div class="panel" style="margin-bottom:18px">
         <h3><span class="dot"></span>시나리오</h3>
@@ -1088,6 +1117,8 @@ function render(key){
   else if(st.screen === 's01')  body = viewS01(st, key);
   else                          body = viewS03(st, key);
 
+  /* 기기 모드 클래스 유지 */
+  el.className = 'phone' + (DEVICE === 'pc' ? ' pc' : '');
   /* 비교 시트·토스트는 전용 컨테이너로 분리 — 목록을 재렌더하지 않고 갱신 (C-18 보존) */
   el.innerHTML =
     '<div class="notch"><i></i></div>' +
@@ -1411,6 +1442,32 @@ function setView(v){
   document.getElementById('nav-sim').className = (v==='sim'?'on':'');
 }
 
+/* 기기 전환 — 모바일 394 / PC 700 (실측 기준) */
+var DEVICE = 'mobile';
+function setDevice(d){
+  if(DEVICE === d) return;
+  DEVICE = d;
+  var mb = document.getElementById('dev-mobile'), pc = document.getElementById('dev-pc');
+  mb.className = (d==='mobile'?'on':''); mb.setAttribute('aria-pressed', d==='mobile');
+  pc.className = (d==='pc'?'on':'');     pc.setAttribute('aria-pressed', d==='pc');
+  applyDevice();
+  render('proto'); render('sim');
+}
+function applyDevice(){
+  var isPc = DEVICE === 'pc';
+  ['ph1','ph2'].forEach(function(id){
+    var el = document.getElementById(id); if(!el) return;
+    el.className = 'phone' + (isPc?' pc':'');
+    if(el.parentElement) el.parentElement.className = 'phone-col' + (isPc?' pc':'');
+  });
+  var sp = document.getElementById('simSplit');
+  if(sp) sp.className = 'split' + (isPc?' pcwide':'');
+  var n = document.getElementById('frameNote');
+  if(n) n.textContent = isPc
+    ? '700 × 940 · PC 풀 팝업 — 오버레이 위 중앙 패널 (실측: 콘텐츠 644 · 헤더 84 · 카드 2열)'
+    : '394 × 940 · 모바일 우선 (C-03 · 트래픽 81%)';
+}
+
 /* 리로드 — 상태 초기화 */
 function reload(key){
   var x = find('P14'); if(x) x.use = true;   // 검증용 플래그 복원
@@ -1684,6 +1741,7 @@ function runScn(id){
    부트
    ========================================================= */
 initScn();
+applyDevice();
 render('proto');
 render('sim');
 
