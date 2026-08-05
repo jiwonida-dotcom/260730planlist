@@ -185,13 +185,12 @@ select{font-family:inherit;cursor:pointer}
 /* 스펙 — 배경 박스 대신 헤어라인 구분, 텍스트가 콘텐츠 경계에서 시작 */
 /* 스펙 영역 — 면(surface) 구성 + 센터 정렬 */
 .info{margin-top:13px;background:var(--bg);border-radius:12px;padding:14px 14px 13px;display:flex;flex-direction:column;align-items:center;gap:10px;font-size:14px;font-weight:700;text-align:center}
-/* 제공량 3항목을 flex-wrap으로 두면 값 길이에 따라 '문자'만 다음 줄로 떨어진다
-   (100GB/11GB+일2GB 등). 고정 격자로 바꿔 폭과 무관하게 배치를 확정:
-   데이터 = 선택 1순위 기준이므로 단독 행, 통화·문자 = 하위 정보 2열 */
-.info .chips{display:grid;grid-template-columns:1fr 1fr;gap:9px 12px;width:100%;justify-items:center;align-items:center}
-.info .chips>span:first-child{grid-column:1 / -1}
-.info .chips>span{white-space:nowrap;min-width:0}
-.info .chips span{display:inline-flex;align-items:center;gap:8px;color:var(--text)}
+/* 제공량 3항목 — 한 줄 고정 3열.
+   아이콘·텍스트를 가로로 두면 폭이 모자라 '문자'가 다음 줄로 떨어지므로(100GB, 11GB+일2GB)
+   아이콘을 텍스트 위로 올려 항목 폭을 텍스트 폭까지 줄인다. 값 길이와 무관하게 항상 1행.
+   데이터 열만 1.2fr — 결합 상품명(11GB+일2GB)이 가장 길다 */
+.info .chips{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:10px;width:100%;align-items:start}
+.info .chips span{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:6px;color:var(--text);white-space:nowrap;min-width:0}
 .info .chips svg{width:18px;height:18px;flex-shrink:0;stroke:var(--muted-2);stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round}
 .info .sp{width:100%;padding-top:10px;border-top:1px solid var(--line-2);font-size:12.5px;font-weight:600;color:var(--muted);line-height:1.5;text-align:center}
 /* 혜택 — 정보 면: 스펙과 동일하게 센터 */
