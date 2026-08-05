@@ -50,8 +50,11 @@ select{font-family:inherit;cursor:pointer}
 /* ===== 레이아웃 ===== */
 .split{display:grid;grid-template-columns:minmax(0,1fr) 418px;gap:28px;align-items:start}
 .solo{display:flex;justify-content:center;gap:28px;align-items:flex-start;flex-wrap:wrap}
-.split.pcwide{grid-template-columns:minmax(0,1fr)}
-.split.pcwide .panel-side{margin-top:4px}
+/* PC 모드에서도 2단 유지 — 시나리오·검증 로그를 좌측에, 화면을 우측에.
+   1단으로 쌓으면 로그가 화면 위로 올라가 조작하며 로그를 볼 수 없다.
+   본문 폭 1224px 기준: 좌 496 + gap 28 + 우 700 */
+.split.pcwide{grid-template-columns:minmax(0,1fr) 700px}
+@media (max-width:1160px){ .split.pcwide{grid-template-columns:minmax(0,1fr)} .split.pcwide .panel-side{margin-top:4px} }
 @media(max-width:980px){.split{grid-template-columns:1fr}.panel-side{order:2}}
 
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:22px;box-shadow:var(--shadow-s)}
