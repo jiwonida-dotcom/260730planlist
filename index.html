@@ -372,6 +372,13 @@ body{background:linear-gradient(180deg,#F3F3F8 0%,#EBEBF2 240px,#F3F3F8 100%)}
 .r-view.on{display:block;animation:fadeIn .26s ease}
 
 .r-sec{margin-bottom:44px}
+.r-sec[hidden],#rt-spec [data-r][hidden]{display:none}
+.r-rolebar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:11px 14px;margin-bottom:28px;box-shadow:var(--shadow-s);position:sticky;top:12px;z-index:20}
+.r-rolebar>b{font-size:12px;font-weight:800;color:var(--muted);margin-right:6px;letter-spacing:-.01em}
+.r-rolebar button{padding:8px 14px;border-radius:10px;border:1px solid var(--line-2);background:var(--surface);font-size:12.5px;font-weight:700;color:var(--muted);min-height:44px;transition:all .15s}
+.r-rolebar button:hover:not(.on){color:var(--text);border-color:var(--main-mid)}
+.r-rolebar button.on{background:var(--main);border-color:var(--main);color:#fff;box-shadow:0 4px 12px rgba(91,75,225,.24)}
+.r-rolecnt{margin-left:auto;font-size:12px;color:var(--muted);font-weight:700;padding-left:10px}
 .r-sec>h2{font-size:19px;font-weight:800;letter-spacing:-.02em;display:flex;align-items:center;gap:10px;margin-bottom:6px}
 .r-sec>h2 .no{flex-shrink:0;width:26px;height:26px;border-radius:8px;background:var(--main);color:#fff;font-size:12.5px;font-weight:800;display:flex;align-items:center;justify-content:center}
 .r-sec>p.d{font-size:13px;color:var(--muted);line-height:1.7;margin:0 0 18px 36px;max-width:900px}
@@ -1003,290 +1010,334 @@ code.k{background:var(--bg);border:1px solid var(--line);border-radius:5px;paddi
 </div>
 </section>
   <section id="rt-spec" class="r-view">
+<div class="r-rolebar" id="roleBar" role="group" aria-label="역할별 보기">
+  <b>역할별 보기</b>
+  <button data-role="all" class="on" aria-pressed="true" onclick="setSpecRole('all')">전체</button>
+  <button data-role="plan" aria-pressed="false" onclick="setSpecRole('plan')">기획</button>
+  <button data-role="design" aria-pressed="false" onclick="setSpecRole('design')">디자인</button>
+  <button data-role="pub" aria-pressed="false" onclick="setSpecRole('pub')">퍼블리싱</button>
+  <button data-role="dev" aria-pressed="false" onclick="setSpecRole('dev')">개발</button>
+  <button data-role="ops" aria-pressed="false" onclick="setSpecRole('ops')">정책 · 운영</button>
+  <span class="r-rolecnt" id="roleCnt" role="status" aria-live="polite"></span>
+</div>
+
 <div class="r-sec">
   <h2><span class="no">1</span>문서 사용 안내</h2>
   <p class="d">본 설계서는 <b>배포된 프로토타입에서 실측한 값</b>으로 작성했습니다. 시안을 눈대중으로 옮긴 수치가 아니라 동작 화면에서 계측한 값이므로, 문서와 구현이 어긋나지 않습니다. 대상은 <b>요금제 선택 화면(S-02)</b> 한 화면입니다.</p>
 
-  <table class="r-t">
-    <thead><tr><th>역할</th><th>먼저 볼 곳</th><th>확인할 것</th></tr></thead>
-    <tbody>
-      <tr><td><b>기획</b></td><td>2 화면 개요 · 4 영역 구성 · 9 노출·운영 규칙</td><td>화면 범위와 분기 조건, 노출 판정 기준이 의도와 일치하는지</td></tr>
-      <tr><td><b>디자인</b></td><td>5 영역별 명세 · 6 카드 · 7 상태 정의 · 11 디자인 토큰</td><td>규격·색상·상태 표현이 시안과 일치하는지, 누락된 상태가 없는지</td></tr>
-      <tr><td><b>퍼블리싱</b></td><td>3 레이아웃 규격 · 8 반응형 · 10 접근성</td><td>브레이크포인트, 그리드 분기, 마크업 역할·키보드 요건</td></tr>
-      <tr><td><b>개발</b></td><td>7 상태 정의 · 9 노출·운영 규칙 · 12 데이터 매핑</td><td>판정식, 상태 전이, 데이터 소스와 실패 시 처리</td></tr>
-      <tr><td><b>정책·운영</b></td><td>9 노출·운영 규칙</td><td>등록·집계 기준, 갱신 주기, 실패 시 노출 정책</td></tr>
-    </tbody>
-  </table>
-
-  <div class="r-note" style="margin-top:14px"><b>근거 표기</b> — 수치 뒤 <span class="cid n">실측</span> 은 프로토타입에서 계측한 값, <span class="cid">C-nn</span> 은 요구사항 정의서의 확정 항목, <span class="cid d">O-nn</span> 은 미확정(결정 대기) 항목입니다.</div>
+  <div data-r="plan design pub dev ops">
+    <table class="r-t">
+      <thead><tr><th>역할</th><th>먼저 볼 곳</th><th>확인할 것</th></tr></thead>
+      <tbody>
+        <tr><td><b>기획</b></td><td>2 화면 개요 · 4 영역 구성 · 9 노출·운영 규칙</td><td>화면 범위와 분기 조건, 노출 판정 기준이 의도와 일치하는지</td></tr>
+        <tr><td><b>디자인</b></td><td>5 영역별 명세 · 6 카드 · 7 상태 정의 · 11 디자인 토큰</td><td>규격·색상·상태 표현이 시안과 일치하는지, 누락된 상태가 없는지</td></tr>
+        <tr><td><b>퍼블리싱</b></td><td>3 레이아웃 규격 · 8 반응형 · 10 접근성</td><td>브레이크포인트, 그리드 분기, 마크업 역할·키보드 요건</td></tr>
+        <tr><td><b>개발</b></td><td>7 상태 정의 · 9 노출·운영 규칙 · 12 데이터 매핑</td><td>판정식, 상태 전이, 데이터 소스와 실패 시 처리</td></tr>
+        <tr><td><b>정책·운영</b></td><td>9 노출·운영 규칙</td><td>등록·집계 기준, 갱신 주기, 실패 시 노출 정책</td></tr>
+      </tbody>
+    </table>
+    <div class="r-note" style="margin-top:14px"><b>근거 표기</b> — 수치 뒤 <span class="cid n">실측</span> 은 프로토타입에서 계측한 값, <span class="cid">C-nn</span> 은 요구사항 정의서의 확정 항목, <span class="cid d">O-nn</span> 은 미확정(결정 대기) 항목입니다.<br><b>역할 필터</b> — 상단에서 역할을 고르면 해당 역할이 판단·작업에 쓰는 항목만 남습니다. 경계에 걸치는 항목은 <b>양쪽 모두에 표시</b>됩니다.</div>
+  </div>
 </div>
 
 <div class="r-sec">
   <h2><span class="no">2</span>화면 개요</h2>
-  <table class="r-t">
-    <thead><tr><th>구분</th><th>내용</th></tr></thead>
-    <tbody>
-      <tr><td>화면 ID · 명</td><td><span class="cid n">S-02</span> 요금제 선택</td></tr>
-      <tr><td>URL</td><td><code class="k">online.uplusumobile.com/onsale/paymentList</code></td></tr>
-      <tr><td>개발 범위</td><td><b>전면 개선</b></td></tr>
-      <tr><td>진입</td><td>S-01 개통 방법 선택에서 <b>개통 시작하기</b> 클릭 (케이스 B 전용)</td></tr>
-      <tr><td>이탈</td><td>하단 <b>신청서 작성하기</b> → S-03 상품 정보 입력 <span class="cid">C-19</span></td></tr>
-      <tr><td>미노출 조건</td><td>케이스 A(요금제 선택 후 진행) — 본 화면을 렌더하지 않고 S-01 → S-03 직행 <span class="cid">C-25</span></td></tr>
-      <tr><td>화면 목적</td><td>가입 여정에서 <b>유일하게 비교·판단을 요구하는 지점</b>. 선택과 확정 사이를 끊지 않는 것이 설계 기준</td></tr>
-    </tbody>
-  </table>
+  <div data-r="plan design pub dev ops">
+    <table class="r-t">
+      <thead><tr><th>구분</th><th>내용</th></tr></thead>
+      <tbody>
+        <tr><td>화면 ID · 명</td><td><span class="cid n">S-02</span> 요금제 선택</td></tr>
+        <tr><td>URL</td><td><code class="k">online.uplusumobile.com/onsale/paymentList</code></td></tr>
+        <tr><td>개발 범위</td><td><b>전면 개선</b></td></tr>
+        <tr><td>진입</td><td>S-01 개통 방법 선택에서 <b>개통 시작하기</b> 클릭 (케이스 B 전용)</td></tr>
+        <tr><td>이탈</td><td>하단 <b>신청서 작성하기</b> → S-03 상품 정보 입력 <span class="cid">C-19</span></td></tr>
+        <tr><td>미노출 조건</td><td>케이스 A(요금제 선택 후 진행) — 본 화면을 렌더하지 않고 S-01 → S-03 직행 <span class="cid">C-25</span></td></tr>
+        <tr><td>화면 목적</td><td>가입 여정에서 <b>유일하게 비교·판단을 요구하는 지점</b>. 선택과 확정 사이를 끊지 않는 것이 설계 기준</td></tr>
+      </tbody>
+    </table>
+  </div>
 </div>
 
 <div class="r-sec">
   <h2><span class="no">3</span>레이아웃 규격</h2>
   <p class="d">PC의 신청서는 전체 페이지가 아니라 <b>오버레이 위 중앙 패널(풀 팝업)</b>입니다. 원 서비스는 1000px 캔버스에 <code class="k">zoom:0.7</code>을 적용해 700px로 축소 표시하므로, 본 설계서는 <b>실렌더 값</b>을 기준값으로 씁니다.</p>
-  <table class="r-t">
-    <thead><tr><th>항목</th><th>모바일</th><th>PC</th><th>비고</th></tr></thead>
-    <tbody>
-      <tr><td>프레임 폭</td><td><b>394px</b></td><td><b>700px</b></td><td>PC는 오버레이 위 중앙 정렬</td></tr>
-      <tr><td>콘텐츠 폭</td><td><b>360px</b></td><td><b>644px</b></td><td>본문 좌우 여백 16 / 28</td></tr>
-      <tr><td>헤더 높이</td><td>49px</td><td><b>84px</b></td><td>상단 고정, 하단 1px 구분선</td></tr>
-      <tr><td>본문 패딩</td><td>18 / 16 / 10</td><td>26 / 28 / 12</td><td>상 / 좌우 / 하</td></tr>
-      <tr><td>목록 배치</td><td>1열</td><td><b>2열</b></td><td>PC 카드 312px · 간격 14px</td></tr>
-      <tr><td>브레이크포인트</td><td colspan="2"><b>768 – 769px</b></td><td>원 서비스 미디어쿼리 <span class="cid n">실측</span> (674 · 720 · 768 · 769 · 1440)</td></tr>
-    </tbody>
-  </table>
-  <div class="r-note" style="margin-top:12px"><b>퍼블리싱 참고</b> — PC 2열 격자는 개통 방법 선택 화면(S-01)의 카드 격자와 동일합니다(315 + 14 + 315 = 644). <b>기존 격자를 그대로 재사용</b>하면 되고 별도 PC 전용 그리드를 만들 필요가 없습니다.</div>
+  <div data-r="design pub dev">
+    <table class="r-t">
+      <thead><tr><th>항목</th><th>모바일</th><th>PC</th><th>비고</th></tr></thead>
+      <tbody>
+        <tr><td>프레임 폭</td><td><b>394px</b></td><td><b>700px</b></td><td>PC는 오버레이 위 중앙 정렬</td></tr>
+        <tr><td>콘텐츠 폭</td><td><b>360px</b></td><td><b>644px</b></td><td>본문 좌우 여백 16 / 28</td></tr>
+        <tr><td>헤더 높이</td><td>49px</td><td><b>84px</b></td><td>상단 고정, 하단 1px 구분선</td></tr>
+        <tr><td>본문 패딩</td><td>18 / 16 / 10</td><td>26 / 28 / 12</td><td>상 / 좌우 / 하</td></tr>
+        <tr><td>목록 배치</td><td>1열</td><td><b>2열</b></td><td>PC 카드 312px · 간격 14px</td></tr>
+        <tr><td>브레이크포인트</td><td colspan="2"><b>768 – 769px</b></td><td>원 서비스 미디어쿼리 <span class="cid n">실측</span> (674 · 720 · 768 · 769 · 1440)</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="r-note" style="margin-top:12px" data-r="pub dev"><b>퍼블리싱 참고</b> — PC 2열 격자는 개통 방법 선택 화면(S-01)의 카드 격자와 동일합니다(315 + 14 + 315 = 644). <b>기존 격자를 그대로 재사용</b>하면 되고 별도 PC 전용 그리드를 만들 필요가 없습니다.</div>
 </div>
 
 <div class="r-sec">
   <h2><span class="no">4</span>영역 구성</h2>
-  <table class="r-t">
-    <thead><tr><th>영역</th><th>명칭</th><th>고정 여부</th><th>역할</th></tr></thead>
-    <tbody>
-      <tr><td class="id"><span class="cid n">A</span></td><td>헤더</td><td>상단 고정</td><td>뒤로 · 화면명(가입신청서) · 닫기</td></tr>
-      <tr><td class="id"><span class="cid n">B</span></td><td>타이틀</td><td>스크롤</td><td>"가입하실 <b>요금제를 선택</b>해 주세요."</td></tr>
-      <tr><td class="id"><span class="cid n">C</span></td><td>탭</td><td>스크롤</td><td>주간(BEST) · 전체 · LTE · 5G <span class="cid">C-14</span></td></tr>
-      <tr><td class="id"><span class="cid n">D</span></td><td>목록 컨트롤</td><td>스크롤</td><td>요금제 개수 · 필터 · 정렬 · 비교 <span class="cid">C-22 · C-27</span></td></tr>
-      <tr><td class="id"><span class="cid n">E</span></td><td>필터 패널</td><td>펼침/접힘</td><td>데이터 제공량 · 월 기본료 · 초기화 · 결과 보기</td></tr>
-      <tr><td class="id"><span class="cid n">F</span></td><td>요금제 목록</td><td>스크롤</td><td>카드 목록 (그룹핑 없음 <span class="cid">C-21</span>, 점진 렌더 <span class="cid">C-39</span>)</td></tr>
-      <tr><td class="id"><span class="cid n">G</span></td><td>Sticky 바</td><td><b>하단 고정</b></td><td>선택 요금제 요약 + 확정 CTA <span class="cid">C-20</span></td></tr>
-    </tbody>
-  </table>
-  <div class="r-note" style="margin-top:12px"><b>D → E 순서</b> — 컨트롤 버튼 순서는 <b>필터 › 정렬 › 비교</b>로 고정합니다. 필터 패널(E)은 D 바로 아래에서 펼쳐지며, 목록(F)을 덮지 않고 밀어냅니다.</div>
+  <div data-r="plan design pub dev">
+    <table class="r-t">
+      <thead><tr><th>영역</th><th>명칭</th><th>고정 여부</th><th>역할</th></tr></thead>
+      <tbody>
+        <tr><td class="id"><span class="cid n">A</span></td><td>헤더</td><td>상단 고정</td><td>뒤로 · 화면명(가입신청서) · 닫기</td></tr>
+        <tr><td class="id"><span class="cid n">B</span></td><td>타이틀</td><td>스크롤</td><td>"가입하실 <b>요금제를 선택</b>해 주세요."</td></tr>
+        <tr><td class="id"><span class="cid n">C</span></td><td>탭</td><td>스크롤</td><td>주간(BEST) · 전체 · LTE · 5G <span class="cid">C-14</span></td></tr>
+        <tr><td class="id"><span class="cid n">D</span></td><td>목록 컨트롤</td><td>스크롤</td><td>요금제 개수 · 필터 · 정렬 · 비교 <span class="cid">C-22 · C-27</span></td></tr>
+        <tr><td class="id"><span class="cid n">E</span></td><td>필터 패널</td><td>펼침/접힘</td><td>데이터 제공량 · 월 기본료 · 초기화 · 결과 보기</td></tr>
+        <tr><td class="id"><span class="cid n">F</span></td><td>요금제 목록</td><td>스크롤</td><td>카드 목록 (그룹핑 없음 <span class="cid">C-21</span>, 점진 렌더 <span class="cid">C-39</span>)</td></tr>
+        <tr><td class="id"><span class="cid n">G</span></td><td>Sticky 바</td><td><b>하단 고정</b></td><td>선택 요금제 요약 + 확정 CTA <span class="cid">C-20</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="r-note" style="margin-top:12px" data-r="plan design pub"><b>D → E 순서</b> — 컨트롤 버튼 순서는 <b>필터 › 정렬 › 비교</b>로 고정합니다. 필터 패널(E)은 D 바로 아래에서 펼쳐지며, 목록(F)을 덮지 않고 밀어냅니다.</div>
 </div>
 
 <div class="r-sec">
   <h2><span class="no">5</span>영역별 상세 명세</h2>
 
-  <div class="r-sub"><span class="g">A</span>헤더 · <span class="g">B</span>타이틀</div>
-  <table class="r-t">
-    <thead><tr><th>요소</th><th>모바일</th><th>PC</th><th>동작</th></tr></thead>
-    <tbody>
-      <tr><td>헤더 높이 · 글자</td><td>49px · 15px / 800</td><td>84px · 18px / 800</td><td>상단 고정, 스크롤 시 유지</td></tr>
-      <tr><td>좌 · 우 아이콘</td><td>28px 폭</td><td>34px 폭</td><td>뒤로 / 닫기</td></tr>
-      <tr><td>타이틀</td><td>18px / 800</td><td>22px / 800</td><td>"요금제를 선택" 부분만 메인 컬러 강조</td></tr>
-    </tbody>
-  </table>
+  <div data-r="design pub">
+    <div class="r-sub"><span class="g">A</span>헤더 · <span class="g">B</span>타이틀</div>
+    <table class="r-t">
+      <thead><tr><th>요소</th><th>모바일</th><th>PC</th><th>동작</th></tr></thead>
+      <tbody>
+        <tr><td>헤더 높이 · 글자</td><td>49px · 15px / 800</td><td>84px · 18px / 800</td><td>상단 고정, 스크롤 시 유지</td></tr>
+        <tr><td>좌 · 우 아이콘</td><td>28px 폭</td><td>34px 폭</td><td>뒤로 / 닫기</td></tr>
+        <tr><td>타이틀</td><td>18px / 800</td><td>22px / 800</td><td>"요금제를 선택" 부분만 메인 컬러 강조</td></tr>
+      </tbody>
+    </table>
+  </div>
 
-  <div class="r-sub"><span class="g">C</span>탭</div>
-  <table class="r-t">
-    <thead><tr><th>항목</th><th>규격</th><th>내용</th></tr></thead>
-    <tbody>
-      <tr><td>버튼</td><td>높이 <b>44px</b> · 12.5px / 700 · radius 99px · 간격 6px</td><td>주간(BEST) · 전체 · LTE · 5G</td></tr>
-      <tr><td>선택 상태</td><td>메인 그라데이션 배경 + 흰 글자 + 그림자</td><td>미선택은 <code class="k">#F3F3F8</code> 배경 · <code class="k">#6C6C7C</code> 글자</td></tr>
-      <tr><td>BEST 배지</td><td>탭 내부 소형 배지</td><td>주간 탭에만 노출</td></tr>
-      <tr><td>탭 전환</td><td colspan="2">리로드 없음. 비교 담은 항목은 <b>탭 이동해도 유지</b> <span class="cid">C-35</span></td></tr>
-    </tbody>
-  </table>
+  <div data-r="design pub dev">
+    <div class="r-sub"><span class="g">C</span>탭</div>
+    <table class="r-t">
+      <thead><tr><th>항목</th><th>규격</th><th>내용</th></tr></thead>
+      <tbody>
+        <tr><td>버튼</td><td>높이 <b>44px</b> · 12.5px / 700 · radius 99px · 간격 6px</td><td>주간(BEST) · 전체 · LTE · 5G</td></tr>
+        <tr><td>선택 상태</td><td>메인 그라데이션 배경 + 흰 글자 + 그림자</td><td>미선택은 <code class="k">#F3F3F8</code> 배경 · <code class="k">#6C6C7C</code> 글자</td></tr>
+        <tr><td>BEST 배지</td><td>탭 내부 소형 배지</td><td>주간 탭에만 노출</td></tr>
+        <tr><td>탭 전환</td><td colspan="2">리로드 없음. 비교 담은 항목은 <b>탭 이동해도 유지</b> <span class="cid">C-35</span></td></tr>
+      </tbody>
+    </table>
+  </div>
 
-  <div class="r-sub"><span class="g">D</span>목록 컨트롤</div>
-  <table class="r-t">
-    <thead><tr><th>요소</th><th>규격</th><th>표기 · 동작</th></tr></thead>
-    <tbody>
-      <tr><td>요금제 개수</td><td>좌측 정렬</td><td>"요금제 <b>N개</b>" — 필터 적용 시 즉시 갱신</td></tr>
-      <tr><td>필터 버튼</td><td>62 × <b>44</b>px · 11.5px / 700</td><td>적용 시 <b>"필터 · N"</b> + chevron 회전</td></tr>
-      <tr><td>정렬 셀렉트</td><td>높이 <b>44px</b></td><td>주간 탭은 <b>주간 순위순</b> 고유 · 그 외 탭은 추천순 등 <span class="cid">C-27</span></td></tr>
-      <tr><td>비교 버튼</td><td>92 × <b>44</b>px · 12px / 700</td><td><b>"비교 0/2"</b> — 담긴 개수를 항상 표기</td></tr>
-    </tbody>
-  </table>
+  <div data-r="plan design pub dev">
+    <div class="r-sub"><span class="g">D</span>목록 컨트롤</div>
+    <table class="r-t">
+      <thead><tr><th>요소</th><th>규격</th><th>표기 · 동작</th></tr></thead>
+      <tbody>
+        <tr><td>요금제 개수</td><td>좌측 정렬</td><td>"요금제 <b>N개</b>" — 필터 적용 시 즉시 갱신</td></tr>
+        <tr><td>필터 버튼</td><td>62 × <b>44</b>px · 11.5px / 700</td><td>적용 시 <b>"필터 · N"</b> + chevron 회전</td></tr>
+        <tr><td>정렬 셀렉트</td><td>높이 <b>44px</b></td><td>주간 탭은 <b>주간 순위순</b> 고유 · 그 외 탭은 추천순 등 <span class="cid">C-27</span></td></tr>
+        <tr><td>비교 버튼</td><td>92 × <b>44</b>px · 12px / 700</td><td><b>"비교 0/2"</b> — 담긴 개수를 항상 표기</td></tr>
+      </tbody>
+    </table>
+  </div>
 
-  <div class="r-sub"><span class="g">E</span>필터 패널</div>
-  <table class="r-t">
-    <thead><tr><th>항목</th><th>모바일</th><th>PC</th></tr></thead>
-    <tbody>
-      <tr><td>조건 배치</td><td>1열 · 라벨 좌측</td><td><b>2열 · 라벨 상단</b></td></tr>
-      <tr><td>셀렉트</td><td>233 × 44px · 12.5px</td><td>296 × 44px · 13px</td></tr>
-      <tr><td>조건 순서</td><td colspan="2"><b>① 데이터 제공량 ② 월 기본료</b> (순서 고정)</td></tr>
-      <tr><td>초기화 버튼</td><td colspan="2">63 × 44px · 좌측 고정. 적용 조건 없으면 비활성</td></tr>
-      <tr><td>결과 보기 버튼</td><td>254px (전체 폭)</td><td><b>184px · 우측 정렬</b></td></tr>
-      <tr><td>패널 높이</td><td>약 232px</td><td>약 205px</td></tr>
-    </tbody>
-  </table>
-  <div class="r-note" style="margin-top:12px"><b>비활성 표기 규칙</b> — 초기화 버튼 비활성은 <b>투명도를 쓰지 않습니다.</b> 투명도는 글자와 배경을 함께 흐리게 만들어 대비가 2:1 수준으로 떨어집니다. 흰 면과 hover 반응을 제거하고 <b>글자색은 <code class="k">#6C6C7C</code>(약 5:1)로 유지</b>합니다.</div>
+  <div data-r="design pub dev">
+    <div class="r-sub"><span class="g">E</span>필터 패널</div>
+    <table class="r-t">
+      <thead><tr><th>항목</th><th>모바일</th><th>PC</th></tr></thead>
+      <tbody>
+        <tr><td>조건 배치</td><td>1열 · 라벨 좌측</td><td><b>2열 · 라벨 상단</b></td></tr>
+        <tr><td>셀렉트</td><td>233 × 44px · 12.5px</td><td>296 × 44px · 13px</td></tr>
+        <tr><td>조건 순서</td><td colspan="2"><b>① 데이터 제공량 ② 월 기본료</b> (순서 고정)</td></tr>
+        <tr><td>초기화 버튼</td><td colspan="2">63 × 44px · 좌측 고정. 적용 조건 없으면 비활성</td></tr>
+        <tr><td>결과 보기 버튼</td><td>254px (전체 폭)</td><td><b>184px · 우측 정렬</b></td></tr>
+        <tr><td>패널 높이</td><td>약 232px</td><td>약 205px</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="r-note" style="margin-top:12px" data-r="design pub"><b>비활성 표기 규칙</b> — 초기화 버튼 비활성은 <b>투명도를 쓰지 않습니다.</b> 투명도는 글자와 배경을 함께 흐리게 만들어 대비가 2:1 수준으로 떨어집니다. 흰 면과 hover 반응을 제거하고 <b>글자색은 <code class="k">#6C6C7C</code>(약 5:1)로 유지</b>합니다.</div>
 
-  <div class="r-sub"><span class="g">G</span>Sticky 바</div>
-  <table class="r-t">
-    <thead><tr><th>상태</th><th>요약 영역</th><th>CTA</th></tr></thead>
-    <tbody>
-      <tr><td><b>미선택</b></td><td><code class="k">#F3F3F8</code> 배경 · 중앙 정렬 안내 문구</td><td>비활성 — 회색 배경 · 그림자 없음</td></tr>
-      <tr><td><b>선택</b></td><td><code class="k">#EFEDFD</code> 배경 · <b>요금제명(좌) + 월 요금(우)</b></td><td>활성 — 메인 그라데이션</td></tr>
-      <tr><td>CTA 규격</td><td colspan="2">높이 <b>52px</b> · 15px / 800 · radius 13px · 문구 <b>"신청서 작성하기"</b> <span class="cid">C-19</span></td></tr>
-      <tr><td>요금제명 넘침</td><td colspan="2">한 줄 말줄임 처리 · 요금은 축약하지 않음</td></tr>
-    </tbody>
-  </table>
-  <div class="r-note" style="margin-top:12px"><b>이 영역이 개선의 핵심입니다.</b> 기존에는 선택 후 무엇을 골랐는지 알려주는 수단이 없었고, 확인 영역은 다음 단계에서 되돌아와야 나타났습니다(C-07). Sticky 바는 <b>확인과 확정을 한 자리에 모으는</b> 장치이므로, 축소하거나 스크롤에 숨기는 변경은 개선 취지를 무효화합니다.</div>
+  <div data-r="plan design pub dev">
+    <div class="r-sub"><span class="g">G</span>Sticky 바</div>
+    <table class="r-t">
+      <thead><tr><th>상태</th><th>요약 영역</th><th>CTA</th></tr></thead>
+      <tbody>
+        <tr><td><b>미선택</b></td><td><code class="k">#F3F3F8</code> 배경 · 중앙 정렬 안내 문구</td><td>비활성 — 회색 배경 · 그림자 없음</td></tr>
+        <tr><td><b>선택</b></td><td><code class="k">#EFEDFD</code> 배경 · <b>요금제명(좌) + 월 요금(우)</b></td><td>활성 — 메인 그라데이션</td></tr>
+        <tr><td>CTA 규격</td><td colspan="2">높이 <b>52px</b> · 15px / 800 · radius 13px · 문구 <b>"신청서 작성하기"</b> <span class="cid">C-19</span></td></tr>
+        <tr><td>요금제명 넘침</td><td colspan="2">한 줄 말줄임 처리 · 요금은 축약하지 않음</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="r-note" style="margin-top:12px" data-r="plan design"><b>이 영역이 개선의 핵심입니다.</b> 기존에는 선택 후 무엇을 골랐는지 알려주는 수단이 없었고, 확인 영역은 다음 단계에서 되돌아와야 나타났습니다(C-07). Sticky 바는 <b>확인과 확정을 한 자리에 모으는</b> 장치이므로, 축소하거나 스크롤에 숨기는 변경은 개선 취지를 무효화합니다.</div>
 </div>
 
 <div class="r-sec">
   <h2><span class="no">6</span>카드 상세</h2>
-  <table class="r-t">
-    <thead><tr><th>구성 요소</th><th>규격 (모바일 / PC)</th><th>내용 · 규칙</th></tr></thead>
-    <tbody>
-      <tr><td>카드</td><td>355 × 293 / <b>312 × 348</b></td><td>radius 16px · padding 16px · border 1px <code class="k">#ECECF2</code></td></tr>
-      <tr><td>순위</td><td>최소 24 × 24px</td><td><b>주간(BEST) 탭 전용</b> · 메인 그라데이션</td></tr>
-      <tr><td>배지</td><td>11px / 700 · radius 7px</td><td><b>최대 2개</b> <span class="cid">C-15</span> · <b>등록 순서</b> <span class="cid">C-37</span> · BEST=그린 / 결합=메인 / 기본=그레이</td></tr>
-      <tr><td>라디오</td><td>23 × 23px</td><td>미선택 = 배경 없음 + 옅은 회색 테두리·체크 / 선택 = 메인 채움 + 흰 체크</td></tr>
-      <tr><td>요금제명</td><td>17.5px / 800</td><td>가입자 유형 제약은 <b>요금제명에 내재</b> <span class="cid">C-34</span></td></tr>
-      <tr><td>가격</td><td>판매가 13.5px 취소선 / <b>프로모션가 21px / 800 메인</b></td><td>프로모션가 없으면 <b>판매가만</b> 노출 <span class="cid">C-30</span></td></tr>
-      <tr><td>제공량 면</td><td>높이 107px · 배경 <code class="k">#F3F3F8</code> · radius 12px</td><td><b>데이터 · 통화 · 문자 3열 1행 고정</b> · 아이콘 상단 / 값 하단 · 항목 높이 41px</td></tr>
-      <tr><td>QOS 문구</td><td>12.5px / 600 · 상단 1px 구분선</td><td>제공량 면 하단에 위치</td></tr>
-      <tr><td>혜택 면</td><td>12.5px / 700 · 배경 <code class="k">#F7F6FE</code></td><td><b>있을 때만 노출</b> · 없으면 영역 자체가 없음</td></tr>
-      <tr><td>비교 담기</td><td>92 × <b>44</b>px · 우측 정렬</td><td>카드 하단, 선택 버튼과 <b>형제 요소로 분리</b></td></tr>
-    </tbody>
-  </table>
-
-  <div class="r-note" style="margin-top:14px"><b>제공량 3열 고정의 이유</b> — 아이콘과 값을 가로로 붙이면 값 길이에 따라(<code class="k">100GB</code> vs <code class="k">11GB+일2GB</code>) '문자' 항목만 다음 줄로 떨어져 <b>카드마다 배치가 달라집니다.</b> 아이콘을 값 위로 올려 항목 폭을 값 폭까지 줄이면 폭과 무관하게 항상 1행입니다. 데이터 열만 <code class="k">1.2fr</code>로 넓게 잡습니다.</div>
-
-  <div class="r-note" style="margin-top:10px"><b>PC 2열 세로 정렬</b> — 카드 높이를 서로 맞출 때, 선택 영역을 <code class="k">button</code>으로 두면 여백이 생긴 카드는 내용을 <b>세로 중앙에 정렬</b>해 옆 카드보다 아래로 밀립니다(실측 28px). 선택 영역을 세로 flex로 두어 <b>상단 정렬을 고정</b>하고 남는 여백은 하단에 모읍니다. 그래야 요금제명·가격·제공량이 가로로 나란히 놓여 비교됩니다.</div>
+  <div data-r="design pub dev">
+    <table class="r-t">
+      <thead><tr><th>구성 요소</th><th>규격 (모바일 / PC)</th><th>내용 · 규칙</th></tr></thead>
+      <tbody>
+        <tr><td>카드</td><td>355 × 293 / <b>312 × 348</b></td><td>radius 16px · padding 16px · border 1px <code class="k">#ECECF2</code></td></tr>
+        <tr><td>순위</td><td>최소 24 × 24px</td><td><b>주간(BEST) 탭 전용</b> · 메인 그라데이션</td></tr>
+        <tr><td>배지</td><td>11px / 700 · radius 7px</td><td><b>최대 2개</b> <span class="cid">C-15</span> · <b>등록 순서</b> <span class="cid">C-37</span> · BEST=그린 / 결합=메인 / 기본=그레이</td></tr>
+        <tr><td>라디오</td><td>23 × 23px</td><td>미선택 = 배경 없음 + 옅은 회색 테두리·체크 / 선택 = 메인 채움 + 흰 체크</td></tr>
+        <tr><td>요금제명</td><td>17.5px / 800</td><td>가입자 유형 제약은 <b>요금제명에 내재</b> <span class="cid">C-34</span></td></tr>
+        <tr><td>가격</td><td>판매가 13.5px 취소선 / <b>프로모션가 21px / 800 메인</b></td><td>프로모션가 없으면 <b>판매가만</b> 노출 <span class="cid">C-30</span></td></tr>
+        <tr><td>제공량 면</td><td>높이 107px · 배경 <code class="k">#F3F3F8</code> · radius 12px</td><td><b>데이터 · 통화 · 문자 3열 1행 고정</b> · 아이콘 상단 / 값 하단 · 항목 높이 41px</td></tr>
+        <tr><td>QOS 문구</td><td>12.5px / 600 · 상단 1px 구분선</td><td>제공량 면 하단에 위치</td></tr>
+        <tr><td>혜택 면</td><td>12.5px / 700 · 배경 <code class="k">#F7F6FE</code></td><td><b>있을 때만 노출</b> · 없으면 영역 자체가 없음</td></tr>
+        <tr><td>비교 담기</td><td>92 × <b>44</b>px · 우측 정렬</td><td>카드 하단, 선택 버튼과 <b>형제 요소로 분리</b></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="r-note" style="margin-top:14px" data-r="design pub"><b>제공량 3열 고정의 이유</b> — 아이콘과 값을 가로로 붙이면 값 길이에 따라(<code class="k">100GB</code> vs <code class="k">11GB+일2GB</code>) '문자' 항목만 다음 줄로 떨어져 <b>카드마다 배치가 달라집니다.</b> 아이콘을 값 위로 올려 항목 폭을 값 폭까지 줄이면 폭과 무관하게 항상 1행입니다. 데이터 열만 <code class="k">1.2fr</code>로 넓게 잡습니다.</div>
+  <div class="r-note" style="margin-top:10px" data-r="pub dev"><b>PC 2열 세로 정렬</b> — 카드 높이를 서로 맞출 때, 선택 영역을 <code class="k">button</code>으로 두면 여백이 생긴 카드는 내용을 <b>세로 중앙에 정렬</b>해 옆 카드보다 아래로 밀립니다(실측 28px). 선택 영역을 세로 flex로 두어 <b>상단 정렬을 고정</b>하고 남는 여백은 하단에 모읍니다. 그래야 요금제명·가격·제공량이 가로로 나란히 놓여 비교됩니다.</div>
 </div>
 
 <div class="r-sec">
   <h2><span class="no">7</span>상태 정의</h2>
   <p class="d">디자인·퍼블리싱·개발이 같은 기준을 쓰도록 <b>모든 상태를 빠짐없이</b> 정의합니다. 정의되지 않은 상태는 구현 단계에서 임의로 결정되어 화면마다 달라집니다.</p>
 
-  <div class="r-sub">카드</div>
-  <table class="r-t">
-    <thead><tr><th>상태</th><th>표현</th><th>발생 조건</th></tr></thead>
-    <tbody>
-      <tr><td>기본</td><td>border 1px <code class="k">#ECECF2</code></td><td>—</td></tr>
-      <tr><td>hover</td><td>border <code class="k">#CBC3F8</code> + 중간 그림자</td><td>포인터 환경만</td></tr>
-      <tr><td>press</td><td><code class="k">scale(0.994)</code></td><td>누르는 중</td></tr>
-      <tr><td><b>선택</b></td><td><b>border 2px</b> <code class="k">#5B4BE1</code> + 메인 그림자 + <b>라디오 채움</b></td><td>카드 클릭 또는 Space</td></tr>
-      <tr><td>키보드 포커스</td><td><b>카드 바깥 헤일로</b> 3px <code class="k">rgba(91,75,225,.30)</code></td><td><code class="k">:has()</code> 미지원 시 outline 2px / offset 3px로 폴백</td></tr>
-    </tbody>
-  </table>
-  <div class="r-note" style="margin-top:10px"><b>보더 두께가 늘어날 때 padding을 1px 줄여</b> 선택 전후 카드 크기가 변하지 않게 합니다(16 → 15). 이걸 빠뜨리면 선택할 때마다 목록이 미세하게 흔들립니다.<br><b>포커스 링은 카드 안쪽에 그리지 않습니다.</b> 내부에 그리면 선택 보더와 겹쳐 이중선으로 보입니다.</div>
+  <div data-r="design pub dev">
+    <div class="r-sub">카드</div>
+    <table class="r-t">
+      <thead><tr><th>상태</th><th>표현</th><th>발생 조건</th></tr></thead>
+      <tbody>
+        <tr><td>기본</td><td>border 1px <code class="k">#ECECF2</code></td><td>—</td></tr>
+        <tr><td>hover</td><td>border <code class="k">#CBC3F8</code> + 중간 그림자</td><td>포인터 환경만</td></tr>
+        <tr><td>press</td><td><code class="k">scale(0.994)</code></td><td>누르는 중</td></tr>
+        <tr><td><b>선택</b></td><td><b>border 2px</b> <code class="k">#5B4BE1</code> + 메인 그림자 + <b>라디오 채움</b></td><td>카드 클릭 또는 Space</td></tr>
+        <tr><td>키보드 포커스</td><td><b>카드 바깥 헤일로</b> 3px <code class="k">rgba(91,75,225,.30)</code></td><td><code class="k">:has()</code> 미지원 시 outline 2px / offset 3px로 폴백</td></tr>
+      </tbody>
+    </table>
+    <div class="r-note" style="margin-top:10px"><b>보더 두께가 늘어날 때 padding을 1px 줄여</b> 선택 전후 카드 크기가 변하지 않게 합니다(16 → 15). 이걸 빠뜨리면 선택할 때마다 목록이 미세하게 흔들립니다.<br><b>포커스 링은 카드 안쪽에 그리지 않습니다.</b> 내부에 그리면 선택 보더와 겹쳐 이중선으로 보입니다.</div>
+  </div>
 
-  <div class="r-sub">기타 컨트롤</div>
-  <table class="r-t">
-    <thead><tr><th>컨트롤</th><th>기본</th><th>선택 / 활성</th><th>비활성</th></tr></thead>
-    <tbody>
-      <tr><td>탭</td><td>회색 배경 · 회색 글자</td><td>메인 그라데이션 · 흰 글자 · 그림자</td><td>—</td></tr>
-      <tr><td>비교 담기</td><td>회색 글자</td><td>메인 글자 + <code class="k">#EFEDFD</code> 배경</td><td>2개 담긴 상태에서 추가 시도 → 토스트 안내</td></tr>
-      <tr><td>필터 초기화</td><td>흰 면 · 회색 글자</td><td>hover 시 메인</td><td><b>면·hover 제거, 글자색 유지</b></td></tr>
-      <tr><td>확정 CTA</td><td>—</td><td>메인 그라데이션 + 그림자</td><td>회색 배경 · 그림자 없음 · <code class="k">not-allowed</code></td></tr>
-    </tbody>
-  </table>
+  <div data-r="design pub dev">
+    <div class="r-sub">기타 컨트롤</div>
+    <table class="r-t">
+      <thead><tr><th>컨트롤</th><th>기본</th><th>선택 / 활성</th><th>비활성</th></tr></thead>
+      <tbody>
+        <tr><td>탭</td><td>회색 배경 · 회색 글자</td><td>메인 그라데이션 · 흰 글자 · 그림자</td><td>—</td></tr>
+        <tr><td>비교 담기</td><td>회색 글자</td><td>메인 글자 + <code class="k">#EFEDFD</code> 배경</td><td>2개 담긴 상태에서 추가 시도 → 토스트 안내</td></tr>
+        <tr><td>필터 초기화</td><td>흰 면 · 회색 글자</td><td>hover 시 메인</td><td><b>면·hover 제거, 글자색 유지</b></td></tr>
+        <tr><td>확정 CTA</td><td>—</td><td>메인 그라데이션 + 그림자</td><td>회색 배경 · 그림자 없음 · <code class="k">not-allowed</code></td></tr>
+      </tbody>
+    </table>
+  </div>
 
-  <div class="r-sub">빈 상태 — 조회·필터 결과 0건</div>
-  <table class="r-t">
-    <thead><tr><th>항목</th><th>정의</th></tr></thead>
-    <tbody>
-      <tr><td>범위</td><td><b>목록 영역만</b> 빈 상태로 전환. 탭 · 컨트롤 · 필터 패널은 <b>그대로 유지</b></td></tr>
-      <tr><td>Alert</td><td><b>띄우지 않음.</b> 조건에 맞는 상품이 없는 것은 오류가 아니라 정보이며, 경고창은 원인이 된 필터 영역을 가림</td></tr>
-      <tr><td>구성</td><td>아이콘 52 × 52px → 안내 문구 13.5px → <b>필터 초기화 버튼</b>(높이 44px)</td></tr>
-      <tr><td>복구</td><td>빈 상태 안의 버튼으로 <b>한 번에</b> 복구 — 별도 이동 없음</td></tr>
-    </tbody>
-  </table>
+  <div data-r="plan design pub dev ops">
+    <div class="r-sub">빈 상태 — 조회·필터 결과 0건</div>
+    <table class="r-t">
+      <thead><tr><th>항목</th><th>정의</th></tr></thead>
+      <tbody>
+        <tr><td>범위</td><td><b>목록 영역만</b> 빈 상태로 전환. 탭 · 컨트롤 · 필터 패널은 <b>그대로 유지</b></td></tr>
+        <tr><td>Alert</td><td><b>띄우지 않음.</b> 조건에 맞는 상품이 없는 것은 오류가 아니라 정보이며, 경고창은 원인이 된 필터 영역을 가림</td></tr>
+        <tr><td>구성</td><td>아이콘 52 × 52px → 안내 문구 13.5px → <b>필터 초기화 버튼</b>(높이 44px)</td></tr>
+        <tr><td>복구</td><td>빈 상태 안의 버튼으로 <b>한 번에</b> 복구 — 별도 이동 없음</td></tr>
+      </tbody>
+    </table>
+  </div>
 </div>
 
 <div class="r-sec">
   <h2><span class="no">8</span>인터랙션 명세</h2>
-  <table class="r-t">
-    <thead><tr><th>동작</th><th>결과</th><th>지켜야 할 것</th></tr></thead>
-    <tbody>
-      <tr><td>카드 선택</td><td>그 자리에서 상태 전환 + Sticky 바 갱신</td><td><b>스크롤 위치 유지</b> <span class="cid">C-18</span> · 목록 전체를 다시 그리지 않음 <span class="cid">C-42</span></td></tr>
-      <tr><td>같은 카드 재선택</td><td>무동작</td><td>해제되지 않음 — 선택은 단일 필수</td></tr>
-      <tr><td>탭 전환</td><td>목록·개수 갱신</td><td>리로드 없음 · 비교 담은 항목 유지 <span class="cid">C-35</span></td></tr>
-      <tr><td>필터 · 정렬</td><td>클라이언트 처리, 개수 즉시 갱신</td><td>리로드 없음 · 0건이어도 Alert 없음</td></tr>
-      <tr><td>비교 담기</td><td>2개가 되면 하단 시트 자동 오픈</td><td>2개 미만이 되면 <b>시트를 닫음</b> — 열린 채 남으면 오류 발생</td></tr>
-      <tr><td>시트 내 선택</td><td>해당 요금제 선택 + 목록 카드 상태 동기화</td><td>어느 쪽을 고르는지 열 아래 버튼으로 명시</td></tr>
-      <tr><td>확정 CTA</td><td>선택 요금제를 세션에 승계 → S-03 이동</td><td>미선택 시 비활성 · 사유 안내</td></tr>
-      <tr><td>목록 스크롤</td><td>점진 렌더 <span class="cid">C-39</span></td><td>개수 표기는 <b>전체 기준</b> 유지</td></tr>
-      <tr><td>뒤로가기 복귀</td><td>S-03에서 돌아온 경우 <b>직전 선택 복원</b> <span class="cid">C-43</span></td><td>첫 페이지 재진입은 미복원 <span class="cid">C-32</span> — 별도 경로</td></tr>
-    </tbody>
-  </table>
+  <div data-r="plan pub dev">
+    <table class="r-t">
+      <thead><tr><th>동작</th><th>결과</th><th>지켜야 할 것</th></tr></thead>
+      <tbody>
+        <tr><td>카드 선택</td><td>그 자리에서 상태 전환 + Sticky 바 갱신</td><td><b>스크롤 위치 유지</b> <span class="cid">C-18</span> · 목록 전체를 다시 그리지 않음 <span class="cid">C-42</span></td></tr>
+        <tr><td>같은 카드 재선택</td><td>무동작</td><td>해제되지 않음 — 선택은 단일 필수</td></tr>
+        <tr><td>탭 전환</td><td>목록·개수 갱신</td><td>리로드 없음 · 비교 담은 항목 유지 <span class="cid">C-35</span></td></tr>
+        <tr><td>필터 · 정렬</td><td>클라이언트 처리, 개수 즉시 갱신</td><td>리로드 없음 · 0건이어도 Alert 없음</td></tr>
+        <tr><td>비교 담기</td><td>2개가 되면 하단 시트 자동 오픈</td><td>2개 미만이 되면 <b>시트를 닫음</b> — 열린 채 남으면 오류 발생</td></tr>
+        <tr><td>시트 내 선택</td><td>해당 요금제 선택 + 목록 카드 상태 동기화</td><td>어느 쪽을 고르는지 열 아래 버튼으로 명시</td></tr>
+        <tr><td>확정 CTA</td><td>선택 요금제를 세션에 승계 → S-03 이동</td><td>미선택 시 비활성 · 사유 안내</td></tr>
+        <tr><td>목록 스크롤</td><td>점진 렌더 <span class="cid">C-39</span></td><td>개수 표기는 <b>전체 기준</b> 유지</td></tr>
+        <tr><td>뒤로가기 복귀</td><td>S-03에서 돌아온 경우 <b>직전 선택 복원</b> <span class="cid">C-43</span></td><td>첫 페이지 재진입은 미복원 <span class="cid">C-32</span> — 별도 경로</td></tr>
+      </tbody>
+    </table>
+  </div>
 </div>
 
 <div class="r-sec">
   <h2><span class="no">9</span>노출 · 운영 규칙</h2>
   <p class="d">정책·운영 담당이 관리하는 기준입니다. <b>백오피스에 새로 만들 관리 항목은 없습니다</b> — 아래 조건은 모두 기존 요금제 데이터와 기존 배치로 충족됩니다.</p>
-  <table class="r-t">
-    <thead><tr><th>항목</th><th>규칙</th><th>실패 · 예외 시</th></tr></thead>
-    <tbody>
-      <tr><td>노출 대상</td><td>요금제 데이터의 <b>사용 여부 = '사용'</b> 인 건만 <span class="cid">C-40</span></td><td>0건 → 빈 상태</td></tr>
-      <tr><td>개통 방법 필터</td><td>확정된 개통 방법을 <b>지원하는 요금제만</b> 사전 필터</td><td>0건 → 빈 상태</td></tr>
-      <tr><td>주간(BEST)</td><td><b>지난주 개통 건수 상위 10개</b> · 매주 월요일 갱신 <span class="cid">C-14</span></td><td>집계 실패 시 <b>직전 주 데이터 유지</b> · 사용자에게 고지하지 않음 <span class="cid">C-29</span></td></tr>
-      <tr><td>배지</td><td><b>최대 2개</b> · 초과 시 <b>등록 순서</b> 기준으로 앞의 2개 <span class="cid">C-15 · C-37</span></td><td>없으면 배지 영역 미노출</td></tr>
-      <tr><td>가격</td><td>프로모션가가 있으면 <b>판매가(취소선) + 프로모션가</b></td><td>프로모션가 없으면 <b>판매가만</b> — 할인 표기 없음 <span class="cid">C-30</span></td></tr>
-      <tr><td>혜택</td><td>등록된 경우에만 카드 하단 면으로 노출</td><td>없으면 영역 자체 미생성</td></tr>
-      <tr><td>가입자 유형 제약</td><td>사전 필터링하지 않음 — <b>요금제명에 유형 표기</b></td><td>가입자 유형 단계의 <b>현행 예외처리 준용</b> <span class="cid">C-28</span></td></tr>
-    </tbody>
-  </table>
-  <div class="r-note" style="margin-top:12px"><b>미확정</b> <span class="cid d">O-17</span> <b>프로모션 적용 기간 표기</b> — 현재 가격에는 적용 기간과 종료 후 금액이 없습니다. 혜택 면에는 "(24개월)"이 표기되어 기준이 어긋나며, 표시·광고 규제 검토가 필요합니다. <b>기획·법무 결정 대기.</b></div>
+  <div data-r="plan dev ops">
+    <table class="r-t">
+      <thead><tr><th>항목</th><th>규칙</th><th>실패 · 예외 시</th></tr></thead>
+      <tbody>
+        <tr><td>노출 대상</td><td>요금제 데이터의 <b>사용 여부 = '사용'</b> 인 건만 <span class="cid">C-40</span></td><td>0건 → 빈 상태</td></tr>
+        <tr><td>개통 방법 필터</td><td>확정된 개통 방법을 <b>지원하는 요금제만</b> 사전 필터</td><td>0건 → 빈 상태</td></tr>
+        <tr><td>주간(BEST)</td><td><b>지난주 개통 건수 상위 10개</b> · 매주 월요일 갱신 <span class="cid">C-14</span></td><td>집계 실패 시 <b>직전 주 데이터 유지</b> · 사용자에게 고지하지 않음 <span class="cid">C-29</span></td></tr>
+        <tr><td>배지</td><td><b>최대 2개</b> · 초과 시 <b>등록 순서</b> 기준으로 앞의 2개 <span class="cid">C-15 · C-37</span></td><td>없으면 배지 영역 미노출</td></tr>
+        <tr><td>가격</td><td>프로모션가가 있으면 <b>판매가(취소선) + 프로모션가</b></td><td>프로모션가 없으면 <b>판매가만</b> — 할인 표기 없음 <span class="cid">C-30</span></td></tr>
+        <tr><td>혜택</td><td>등록된 경우에만 카드 하단 면으로 노출</td><td>없으면 영역 자체 미생성</td></tr>
+        <tr><td>가입자 유형 제약</td><td>사전 필터링하지 않음 — <b>요금제명에 유형 표기</b></td><td>가입자 유형 단계의 <b>현행 예외처리 준용</b> <span class="cid">C-28</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="r-note" style="margin-top:12px" data-r="plan ops"><b>미확정</b> <span class="cid d">O-17</span> <b>프로모션 적용 기간 표기</b> — 현재 가격에는 적용 기간과 종료 후 금액이 없습니다. 혜택 면에는 "(24개월)"이 표기되어 기준이 어긋나며, 표시·광고 규제 검토가 필요합니다. <b>기획·법무 결정 대기.</b></div>
 </div>
 
 <div class="r-sec">
   <h2><span class="no">10</span>접근성 명세</h2>
   <p class="d">시각 표현과 보조기술 전달은 <b>별개 요건</b>입니다. 색상 대비를 맞췄다고 접근성이 확보되지 않습니다.</p>
-  <table class="r-t">
-    <thead><tr><th>요건</th><th>구현</th><th>기준</th></tr></thead>
-    <tbody>
-      <tr><td>목록 구조</td><td>목록에 <code class="k">role="radiogroup"</code>, 각 카드에 <code class="k">role="radio"</code> + <code class="k">aria-checked</code></td><td>WCAG 4.1.2</td></tr>
-      <tr><td>키보드 이동</td><td><b>roving tabindex</b> — 선택 항목만 <code class="k">tabindex="0"</code>, 방향키로 이동, Space로 선택</td><td>WCAG 2.1.1</td></tr>
-      <tr><td>포커스 표시</td><td>카드 <b>바깥</b> 헤일로 3px (내부에 그리면 선택 보더와 이중선)</td><td>WCAG 2.4.7</td></tr>
-      <tr><td>선택 상태 인지</td><td>색상 단독 금지 — <b>보더 두께 + 채움 + 라디오</b> 3중 단서</td><td>WCAG 1.4.1</td></tr>
-      <tr><td>토글 버튼</td><td>비교 담기에 <code class="k">aria-pressed</code></td><td>WCAG 4.1.2</td></tr>
-      <tr><td>상태 변경 알림</td><td>토스트에 <code class="k">role="status"</code> + <code class="k">aria-live="polite"</code></td><td>WCAG 4.1.3</td></tr>
-      <tr><td>터치 타깃</td><td>화면 내 <b>상시 노출 컨트롤 전부 44px 이상</b> — 탭 · 칩 · 셀렉트 · 시트 닫기 포함 <span class="cid">C-38</span></td><td>WCAG 2.5.5</td></tr>
-    </tbody>
-  </table>
-  <div class="r-note" style="margin-top:12px"><b>검증 상태</b> — 위 항목은 마크업·CSS 수준에서 확인했습니다. <b>실제 스크린리더 음성 출력과 실기기 포커스 렌더는 확인이 남아 있습니다.</b> 개발 완료 후 실기기 검증을 별도로 잡아야 합니다.</div>
+  <div data-r="design pub dev">
+    <table class="r-t">
+      <thead><tr><th>요건</th><th>구현</th><th>기준</th></tr></thead>
+      <tbody>
+        <tr><td>목록 구조</td><td>목록에 <code class="k">role="radiogroup"</code>, 각 카드에 <code class="k">role="radio"</code> + <code class="k">aria-checked</code></td><td>WCAG 4.1.2</td></tr>
+        <tr><td>키보드 이동</td><td><b>roving tabindex</b> — 선택 항목만 <code class="k">tabindex="0"</code>, 방향키로 이동, Space로 선택</td><td>WCAG 2.1.1</td></tr>
+        <tr><td>포커스 표시</td><td>카드 <b>바깥</b> 헤일로 3px (내부에 그리면 선택 보더와 이중선)</td><td>WCAG 2.4.7</td></tr>
+        <tr><td>선택 상태 인지</td><td>색상 단독 금지 — <b>보더 두께 + 채움 + 라디오</b> 3중 단서</td><td>WCAG 1.4.1</td></tr>
+        <tr><td>토글 버튼</td><td>비교 담기에 <code class="k">aria-pressed</code></td><td>WCAG 4.1.2</td></tr>
+        <tr><td>상태 변경 알림</td><td>토스트에 <code class="k">role="status"</code> + <code class="k">aria-live="polite"</code></td><td>WCAG 4.1.3</td></tr>
+        <tr><td>터치 타깃</td><td>화면 내 <b>상시 노출 컨트롤 전부 44px 이상</b> — 탭 · 칩 · 셀렉트 · 시트 닫기 포함 <span class="cid">C-38</span></td><td>WCAG 2.5.5</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="r-note" style="margin-top:12px" data-r="plan pub dev"><b>검증 상태</b> — 위 항목은 마크업·CSS 수준에서 확인했습니다. <b>실제 스크린리더 음성 출력과 실기기 포커스 렌더는 확인이 남아 있습니다.</b> 개발 완료 후 실기기 검증을 별도로 잡아야 합니다.</div>
 </div>
 
 <div class="r-sec">
   <h2><span class="no">11</span>디자인 토큰</h2>
-  <table class="r-t">
-    <thead><tr><th>토큰</th><th>값</th><th>용도</th></tr></thead>
-    <tbody>
-      <tr><td>메인</td><td><code class="k">#5B4BE1</code></td><td>선택 상태 · 가격 · CTA · 포커스</td></tr>
-      <tr><td>메인 중간</td><td><code class="k">#CBC3F8</code></td><td>hover 보더</td></tr>
-      <tr><td>메인 약</td><td><code class="k">#EFEDFD</code></td><td>선택 요약 배경 · 결합 배지</td></tr>
-      <tr><td>메인 고스트</td><td><code class="k">#F7F6FE</code></td><td>혜택 면 배경</td></tr>
-      <tr><td>배경</td><td><code class="k">#F3F3F8</code></td><td>제공량 면 · 미선택 요약</td></tr>
-      <tr><td>면</td><td><code class="k">#FFFFFF</code></td><td>카드 · 패널</td></tr>
-      <tr><td>구분선</td><td><code class="k">#ECECF2</code> / <code class="k">#DFDEE9</code></td><td>카드 보더 / 컨트롤 보더</td></tr>
-      <tr><td>본문 · 보조 · 약보조</td><td><code class="k">#16161E</code> / <code class="k">#6C6C7C</code> / <code class="k">#9C9CAB</code></td><td>텍스트 위계</td></tr>
-      <tr><td>BEST 배지</td><td>배경 <code class="k">#E1F6EA</code> · 글자 <code class="k">#0E8B52</code></td><td>실적 기반 추천 표시</td></tr>
-      <tr><td>기본 radius</td><td><code class="k">16px</code></td><td>카드 · 큰 면 (내부 면 12px · 컨트롤 10~11px · CTA 13px)</td></tr>
-    </tbody>
-  </table>
-  <div class="r-note" style="margin-top:12px"><b>디자인 확인 필요</b> — 위 색상은 프로토타입 기준값이며 <b>실 서비스 브랜드 토큰과 대조가 필요합니다.</b> 원 서비스의 CTA는 <code class="k">#662D91</code> 계열로 관측되었습니다.</div>
+  <div data-r="design pub">
+    <table class="r-t">
+      <thead><tr><th>토큰</th><th>값</th><th>용도</th></tr></thead>
+      <tbody>
+        <tr><td>메인</td><td><code class="k">#5B4BE1</code></td><td>선택 상태 · 가격 · CTA · 포커스</td></tr>
+        <tr><td>메인 중간</td><td><code class="k">#CBC3F8</code></td><td>hover 보더</td></tr>
+        <tr><td>메인 약</td><td><code class="k">#EFEDFD</code></td><td>선택 요약 배경 · 결합 배지</td></tr>
+        <tr><td>메인 고스트</td><td><code class="k">#F7F6FE</code></td><td>혜택 면 배경</td></tr>
+        <tr><td>배경</td><td><code class="k">#F3F3F8</code></td><td>제공량 면 · 미선택 요약</td></tr>
+        <tr><td>면</td><td><code class="k">#FFFFFF</code></td><td>카드 · 패널</td></tr>
+        <tr><td>구분선</td><td><code class="k">#ECECF2</code> / <code class="k">#DFDEE9</code></td><td>카드 보더 / 컨트롤 보더</td></tr>
+        <tr><td>본문 · 보조 · 약보조</td><td><code class="k">#16161E</code> / <code class="k">#6C6C7C</code> / <code class="k">#9C9CAB</code></td><td>텍스트 위계</td></tr>
+        <tr><td>BEST 배지</td><td>배경 <code class="k">#E1F6EA</code> · 글자 <code class="k">#0E8B52</code></td><td>실적 기반 추천 표시</td></tr>
+        <tr><td>기본 radius</td><td><code class="k">16px</code></td><td>카드 · 큰 면 (내부 면 12px · 컨트롤 10~11px · CTA 13px)</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="r-note" style="margin-top:12px" data-r="design"><b>디자인 확인 필요</b> — 위 색상은 프로토타입 기준값이며 <b>실 서비스 브랜드 토큰과 대조가 필요합니다.</b> 원 서비스의 CTA는 <code class="k">#662D91</code> 계열로 관측되었습니다.</div>
 </div>
 
 <div class="r-sec">
   <h2><span class="no">12</span>데이터 매핑</h2>
-  <table class="r-t">
-    <thead><tr><th>화면 항목</th><th>소스</th><th>형식 · 처리</th></tr></thead>
-    <tbody>
-      <tr><td>요금제명</td><td>요금제 마스터</td><td>가입자 유형 제약이 명칭에 포함됨</td></tr>
-      <tr><td>판매가 · 프로모션가</td><td>요금제 마스터</td><td>프로모션가 존재 여부로 표기 분기</td></tr>
-      <tr><td>데이터 · 통화 · 문자</td><td>요금제 마스터</td><td>문자열 그대로 노출 (가공 없음)</td></tr>
-      <tr><td>QOS</td><td>요금제 마스터</td><td>제공량 면 하단 문구</td></tr>
-      <tr><td>혜택</td><td>요금제 마스터</td><td>없으면 영역 미생성</td></tr>
-      <tr><td>배지</td><td>요금제 마스터</td><td>등록 순서 상위 2개</td></tr>
-      <tr><td>주간 순위</td><td><b>기존 집계 배치 재사용</b></td><td>주 1회 · 실패 시 직전 데이터</td></tr>
-      <tr><td>노출 여부</td><td>사용 여부 필드</td><td><code class="k">'사용'</code>인 건만</td></tr>
-      <tr><td>선택 요금제 승계</td><td>신청서 세션</td><td>S-03 이동 시 기록 · 변경 시 최종 선택으로 갱신 <span class="cid">C-36</span></td></tr>
-    </tbody>
-  </table>
-  <div class="r-note" style="margin-top:12px"><b>개발 협의</b> — 진입 케이스 판정(A / B)의 소스는 <b>유입 파라미터와 세션 모두</b>를 판정 기준에 포함합니다. 원천(<code class="k">www</code>)과 신청서(<code class="k">online</code>)가 서로 다른 서브도메인이라 단일 소스로는 판정이 불완전합니다.</div>
+  <div data-r="dev ops">
+    <table class="r-t">
+      <thead><tr><th>화면 항목</th><th>소스</th><th>형식 · 처리</th></tr></thead>
+      <tbody>
+        <tr><td>요금제명</td><td>요금제 마스터</td><td>가입자 유형 제약이 명칭에 포함됨</td></tr>
+        <tr><td>판매가 · 프로모션가</td><td>요금제 마스터</td><td>프로모션가 존재 여부로 표기 분기</td></tr>
+        <tr><td>데이터 · 통화 · 문자</td><td>요금제 마스터</td><td>문자열 그대로 노출 (가공 없음)</td></tr>
+        <tr><td>QOS</td><td>요금제 마스터</td><td>제공량 면 하단 문구</td></tr>
+        <tr><td>혜택</td><td>요금제 마스터</td><td>없으면 영역 미생성</td></tr>
+        <tr><td>배지</td><td>요금제 마스터</td><td>등록 순서 상위 2개</td></tr>
+        <tr><td>주간 순위</td><td><b>기존 집계 배치 재사용</b></td><td>주 1회 · 실패 시 직전 데이터</td></tr>
+        <tr><td>노출 여부</td><td>사용 여부 필드</td><td><code class="k">'사용'</code>인 건만</td></tr>
+        <tr><td>선택 요금제 승계</td><td>신청서 세션</td><td>S-03 이동 시 기록 · 변경 시 최종 선택으로 갱신 <span class="cid">C-36</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="r-note" style="margin-top:12px" data-r="dev"><b>개발 협의</b> — 진입 케이스 판정(A / B)의 소스는 <b>유입 파라미터와 세션 모두</b>를 판정 기준에 포함합니다. 원천(<code class="k">www</code>)과 신청서(<code class="k">online</code>)가 서로 다른 서브도메인이라 단일 소스로는 판정이 불완전합니다.</div>
 </div>
 </section>
 </main>
@@ -2051,12 +2102,50 @@ function runScn(id){
    ========================================================= */
 initScn();
 applyDevice();
+setSpecRole('all');
 render('proto');
 render('sim');
 
 
 /* ===== 리포트 탭 ===== */
 var R_TABS = ['proto','plan','func','req','spec'];
+
+/* 화면설계서 — 역할별 필터.
+   블록의 data-r에 해당 역할이 포함되면 표시. 경계 항목은 여러 역할에 중복 태깅한다.
+   숨김 후 표가 하나도 남지 않은 장(章)은 제목만 남지 않도록 함께 숨긴다 */
+var SPEC_ROLE = 'all';
+var ROLE_LABEL = {all:'전체', plan:'기획', design:'디자인', pub:'퍼블리싱', dev:'개발', ops:'정책·운영'};
+function setSpecRole(r){
+  SPEC_ROLE = r;
+  var bar = document.getElementById('roleBar');
+  var btns = bar.getElementsByTagName('button');
+  for(var i=0;i<btns.length;i++){
+    var on = btns[i].getAttribute('data-role') === r;
+    btns[i].className = on ? 'on' : '';
+    btns[i].setAttribute('aria-pressed', on ? 'true' : 'false');
+  }
+  var blocks = document.querySelectorAll('#rt-spec [data-r]');
+  var shown = 0, hidden = 0;
+  for(var k=0;k<blocks.length;k++){
+    var roles = ' ' + blocks[k].getAttribute('data-r') + ' ';
+    var ok = (r === 'all') || roles.indexOf(' ' + r + ' ') >= 0;
+    if(ok){ blocks[k].removeAttribute('hidden'); shown++; }
+    else  { blocks[k].setAttribute('hidden',''); hidden++; }
+  }
+  var secs = document.querySelectorAll('#rt-spec .r-sec');
+  var secHidden = 0;
+  for(var m=0;m<secs.length;m++){
+    var own = secs[m].querySelectorAll('[data-r]').length;
+    var vis = secs[m].querySelectorAll('[data-r]:not([hidden])').length;
+    if(own > 0 && vis === 0){ secs[m].setAttribute('hidden',''); secHidden++; }
+    else secs[m].removeAttribute('hidden');
+  }
+  var c = document.getElementById('roleCnt');
+  c.textContent = (r === 'all')
+    ? ('전체 ' + shown + '개 항목')
+    : (ROLE_LABEL[r] + ' 기준 ' + shown + '개 표시 · ' + hidden + '개 숨김'
+       + (secHidden ? ' (' + secHidden + '개 장 제외)' : ''));
+}
 function showTab(id){
   for(var i=0;i<R_TABS.length;i++){
     var k = R_TABS[i];
