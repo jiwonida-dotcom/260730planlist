@@ -1972,11 +1972,12 @@ function clearCmp(key){
   paintSheet(key); paintCmpChip(key);
   for(var i=0;i<old.length;i++) paintCmpBox(key, old[i]);
 }
+/* 비교 시트에서 선택 — 시트만 닫고 비교 목록은 유지한다(C-35 취지).
+   담는 데 두 번의 액션이 든 목록을 한 번의 선택으로 지우면 재비교가 불가능해지고,
+   '비교 목록 비우기' 버튼(명시적 수단)의 존재 이유도 사라진다 */
 function pickFromSheet(key, code){
-  var st = S[key], old = st.compare.slice();
-  st.sheet = false; st.compare = [];
-  paintSheet(key); paintCmpChip(key);
-  for(var i=0;i<old.length;i++) paintCmpBox(key, old[i]);
+  S[key].sheet = false;
+  paintSheet(key);
   pick(key, code);
 }
 function cta0(key){ setToast(key, '요금제를 먼저 선택해 주세요'); logStep(key, 'STEP 12', 'f', 'selectedPlan = null → 비활성 CTA 안내 토스트'); }
